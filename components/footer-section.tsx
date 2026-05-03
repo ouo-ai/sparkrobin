@@ -2,6 +2,7 @@
 
 import { Twitter, Youtube } from "lucide-react"
 import Image from "next/image"
+import Link from "next/link"
 
 export function FooterSection() {
   return (
@@ -27,18 +28,21 @@ export function FooterSection() {
         <div className="flex flex-col justify-start items-start gap-3">
           <h3 className="text-muted-foreground text-sm font-medium leading-5">Product</h3>
           <div className="flex flex-col justify-end items-start gap-2">
-            <a href="#features-section" className="text-foreground text-sm font-normal leading-5 hover:underline">
+            <Link href="/#features-section" className="text-foreground text-sm font-normal leading-5 hover:underline">
               Features
-            </a>
-            <a href="#use-cases-section" className="text-foreground text-sm font-normal leading-5 hover:underline">
+            </Link>
+            <Link href="/#use-cases-section" className="text-foreground text-sm font-normal leading-5 hover:underline">
               Use Cases
-            </a>
-            <a href="#generator" className="text-foreground text-sm font-normal leading-5 hover:underline">
+            </Link>
+            <Link href="/pricing" className="text-foreground text-sm font-normal leading-5 hover:underline">
+              Pricing
+            </Link>
+            <Link href="/#generator" className="text-foreground text-sm font-normal leading-5 hover:underline">
               Video Generator
-            </a>
-            <a href="#faq-section" className="text-foreground text-sm font-normal leading-5 hover:underline">
+            </Link>
+            <Link href="/#faq-section" className="text-foreground text-sm font-normal leading-5 hover:underline">
               FAQ
-            </a>
+            </Link>
           </div>
         </div>
         <div className="flex flex-col justify-start items-start gap-3">
