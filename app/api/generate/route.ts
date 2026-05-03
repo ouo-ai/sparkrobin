@@ -1,4 +1,12 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from "next/server"
+import {
+  ApimartRequestError,
+  getApimartConfig,
+  normalizeKlingAspectRatio,
+  normalizeKlingDuration,
+  normalizeStyle,
+  submitKlingVideoTask,
+} from "@/lib/apimart"
 
 interface GenerateRequest {
   prompt: string
@@ -9,7 +17,10 @@ interface GenerateRequest {
 
 interface GenerateResponse {
   id: string
-  status: 'demo' | 'processing' | 'completed' | 'error'
+  taskId?: string
+  provider: "demo" | "apimart"
+  model: "demo" | "kling-v2-6"
+  status: "demo" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
   prompt: string
   style: string
   duration: number
@@ -17,104 +28,120 @@ interface GenerateResponse {
   estimatedSeconds: number
   previewTitle: string
   frames: number
+  progress?: number
   message: string
   demoMode: boolean
 }
 
-// Deterministic hash function for consistent demo results
 function hashString(str: string): number {
   let hash = 0
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i)
-    hash = ((hash << 5) - hash) + char
+    hash = (hash << 5) - hash + char
     hash = hash & hash
   }
   return Math.abs(hash)
 }
 
+function getPreviewTitle(prompt: string): string {
+  return prompt.length > 50 ? `${prompt.substring(0, 47)}...` : prompt
+}
+
+function getDemoResponse(params: {
+  prompt: string
+  style: string
+  duration: 5 | 10
+  aspectRatio: "16:9" | "9:16" | "1:1"
+}): GenerateResponse {
+  const promptHash = hashString(params.prompt.toLowerCase())
+  const id = `demo_${promptHash.toString(36)}_${Date.now().toString(36)}`
+
+  return {
+    id,
+    provider: "demo",
+    model: "demo",
+    status: "demo",
+    prompt: params.prompt,
+    style: params.style,
+    duration: params.duration,
+    aspectRatio: params.aspectRatio,
+    estimatedSeconds: Math.ceil(params.duration * 2.5),
+    previewTitle: getPreviewTitle(params.prompt),
+    frames: params.duration * 24,
+    message: "Demo mode is active because APIMart API credentials are not configured.",
+    demoMode: true,
+  }
+}
+
 export async function POST(request: NextRequest): Promise<NextResponse<GenerateResponse | { error: string }>> {
   try {
     const body: GenerateRequest = await request.json()
-    
-    const { prompt, style = 'cinematic', aspectRatio = '16:9', duration = 4 } = body
 
-    // Validate prompt
-    if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
+    const prompt = typeof body.prompt === "string" ? body.prompt.trim() : ""
+    const style = normalizeStyle(body.style)
+    const duration = normalizeKlingDuration(body.duration)
+    const aspectRatio = normalizeKlingAspectRatio(body.aspectRatio)
+
+    if (!prompt) {
       return NextResponse.json(
-        { error: 'Prompt is required and must be a non-empty string' },
-        { status: 400 }
+        { error: "Prompt is required and must be a non-empty string" },
+        { status: 400 },
       )
     }
 
-    if (prompt.trim().length < 3) {
+    if (prompt.length < 3) {
       return NextResponse.json(
-        { error: 'Prompt must be at least 3 characters long' },
-        { status: 400 }
+        { error: "Prompt must be at least 3 characters long" },
+        { status: 400 },
       )
     }
 
-    if (prompt.length > 500) {
+    if (prompt.length > 2500) {
       return NextResponse.json(
-        { error: 'Prompt must be 500 characters or less' },
-        { status: 400 }
+        { error: "Prompt must be 2500 characters or less" },
+        { status: 400 },
       )
     }
 
-    // Validate duration
-    const validDurations = [2, 4, 6, 8]
-    const validatedDuration = validDurations.includes(duration) ? duration : 4
-
-    // Validate aspect ratio
-    const validAspectRatios = ['16:9', '9:16', '1:1', '4:3']
-    const validatedAspectRatio = validAspectRatios.includes(aspectRatio) ? aspectRatio : '16:9'
-
-    // Validate style
-    const validStyles = ['cinematic', 'anime', 'realistic', 'artistic', 'minimalist']
-    const validatedStyle = validStyles.includes(style) ? style : 'cinematic'
-
-    // Generate deterministic demo response based on prompt hash
-    const promptHash = hashString(prompt.trim().toLowerCase())
-    const id = `demo_${promptHash.toString(36)}_${Date.now().toString(36)}`
-    
-    // Calculate frames based on duration (24fps)
-    const frames = validatedDuration * 24
-
-    // Generate preview title from prompt
-    const previewTitle = prompt.trim().length > 50 
-      ? `${prompt.trim().substring(0, 47)}...` 
-      : prompt.trim()
-
-    // Estimated generation time (demo mode shows instant)
-    const estimatedSeconds = Math.ceil(validatedDuration * 2.5)
-
-    const response: GenerateResponse = {
-      id,
-      status: 'demo',
-      prompt: prompt.trim(),
-      style: validatedStyle,
-      duration: validatedDuration,
-      aspectRatio: validatedAspectRatio,
-      estimatedSeconds,
-      previewTitle,
-      frames,
-      message: 'This is a demo preview. Connect a video generation provider to create real AI videos.',
-      demoMode: true,
+    if (!getApimartConfig()) {
+      return NextResponse.json(getDemoResponse({ prompt, style, duration, aspectRatio }))
     }
 
-    return NextResponse.json(response)
-  } catch {
+    const task = await submitKlingVideoTask({ prompt, style, duration, aspectRatio })
+
+    return NextResponse.json({
+      id: task.taskId,
+      taskId: task.taskId,
+      provider: "apimart",
+      model: "kling-v2-6",
+      status: task.status,
+      prompt,
+      style,
+      duration,
+      aspectRatio,
+      estimatedSeconds: duration === 10 ? 90 : 60,
+      previewTitle: getPreviewTitle(prompt),
+      frames: duration * 24,
+      progress: 0,
+      message: "Kling v2.6 task submitted through APIMart. Status will update automatically.",
+      demoMode: false,
+    })
+  } catch (error) {
+    const statusCode = error instanceof ApimartRequestError ? error.statusCode : 400
+    const errorMessage = error instanceof Error ? error.message : "Invalid request body"
+
     return NextResponse.json(
-      { error: 'Invalid request body' },
-      { status: 400 }
+      { error: errorMessage },
+      { status: statusCode >= 400 && statusCode < 500 ? statusCode : 502 },
     )
   }
 }
 
 export async function GET(): Promise<NextResponse<{ message: string; endpoints: { POST: string } }>> {
   return NextResponse.json({
-    message: 'Spark Robin AI Video Generator API',
+    message: "Spark Robin AI Video Generator API",
     endpoints: {
-      POST: 'Generate a demo video response with prompt, style, aspectRatio, and duration',
+      POST: "Submit a Kling v2.6 video generation task through APIMart, or return demo mode without credentials.",
     },
   })
 }
