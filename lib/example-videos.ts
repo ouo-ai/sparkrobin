@@ -9,6 +9,8 @@ export interface ExampleVideo {
   styleLabel: string
   duration: ExampleVideoDuration
   aspectRatio: ExampleVideoAspectRatio
+  videoSrc: string
+  posterSrc: string
 }
 
 export const EXAMPLE_VIDEOS: ExampleVideo[] = [
@@ -19,6 +21,8 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     styleLabel: "Cinematic",
     duration: 5,
     aspectRatio: "16:9",
+    videoSrc: "/videos/examples/misty-mountains.mp4",
+    posterSrc: "/videos/examples/posters/misty-mountains.jpg",
   },
   {
     id: "neon-city",
@@ -27,6 +31,8 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     styleLabel: "Artistic",
     duration: 10,
     aspectRatio: "16:9",
+    videoSrc: "/videos/examples/neon-city.mp4",
+    posterSrc: "/videos/examples/posters/neon-city.jpg",
   },
   {
     id: "cherry-blossom",
@@ -35,6 +41,8 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     styleLabel: "Anime",
     duration: 5,
     aspectRatio: "9:16",
+    videoSrc: "/videos/examples/cherry-blossom.mp4",
+    posterSrc: "/videos/examples/posters/cherry-blossom.jpg",
   },
   {
     id: "storm-cliffs",
@@ -43,6 +51,8 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     styleLabel: "Realistic",
     duration: 10,
     aspectRatio: "16:9",
+    videoSrc: "/videos/examples/storm-cliffs.mp4",
+    posterSrc: "/videos/examples/posters/storm-cliffs.jpg",
   },
   {
     id: "geometric-flow",
@@ -51,6 +61,8 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     styleLabel: "Minimalist",
     duration: 5,
     aspectRatio: "1:1",
+    videoSrc: "/videos/examples/geometric-flow.mp4",
+    posterSrc: "/videos/examples/posters/geometric-flow.jpg",
   },
   {
     id: "winter-cabin",
@@ -59,9 +71,7 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     styleLabel: "Cinematic",
     duration: 10,
     aspectRatio: "1:1",
+    videoSrc: "/videos/examples/winter-cabin.mp4",
+    posterSrc: "/videos/examples/posters/winter-cabin.jpg",
   },
 ]
-
-export function getExampleVideoById(id: string): ExampleVideo | undefined {
-  return EXAMPLE_VIDEOS.find((example) => example.id === id)
-}
