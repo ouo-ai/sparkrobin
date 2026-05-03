@@ -290,7 +290,7 @@ export function HeroSection() {
           Spark Robin: AI Video Generator
         </h1>
         <p className="text-muted-foreground text-base md:text-base lg:text-lg font-medium leading-relaxed max-w-lg mx-auto text-balance">
-          Transform text and images into stunning AI-generated videos. Try instantly below - no registration required.
+          Turn text and image ideas into short AI video concepts. Try the Spark Robin workflow below with no registration required.
         </p>
       </div>
 

@@ -7,13 +7,13 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Spark Robin AI Video Generator | Text to Video',
-  description: 'Spark Robin is an AI video generator for turning text and image ideas into short video concepts with a no-registration workflow.',
-  keywords: ['Spark Robin', 'sparkrobin', 'spark robin ai', 'Spark Robin AI video generator', 'AI video generator', 'text to video generator', 'image to video generator'],
+  title: 'Spark Robin AI Video Generator | Text to Video Workflow',
+  description: 'Spark Robin is a no-registration AI video generator workflow for turning text and image ideas into short video concepts online.',
+  keywords: ['Spark Robin', 'SparkRobin', 'sparkrobin.video', 'spark robin ai', 'Spark Robin AI video generator', 'AI video generator', 'text to video generator', 'image to video generator'],
   authors: [{ name: 'Spark Robin' }],
   creator: 'Spark Robin',
   publisher: 'Spark Robin',
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://sparkrobin.ai'),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://sparkrobin.video'),
   alternates: {
     canonical: '/',
   },
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: '/',
     siteName: 'Spark Robin',
-    title: 'Spark Robin AI Video Generator | Text to Video',
+    title: 'Spark Robin AI Video Generator | Text to Video Workflow',
     description: 'Use Spark Robin to preview a no-registration AI video generator workflow for text-to-video and image-to-video ideas.',
     images: [
       {
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Spark Robin AI Video Generator',
-    description: 'Generate text-to-video and image-to-video concepts in the Spark Robin no-registration workflow.',
+    description: 'Preview text-to-video and image-to-video concepts in the Spark Robin no-registration workflow.',
     images: ['/brand/og-image.png'],
     creator: '@sparkrobin',
   },
@@ -88,7 +88,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         {children}
-        <script defer data-domain="sparkrobin.ai" src="https://plau.origai.net/js/script.js" />
+        <script defer data-domain="sparkrobin.video" src="https://plau.origai.net/js/script.js" />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>

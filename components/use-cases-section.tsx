@@ -1,41 +1,35 @@
-import { Video, Megaphone, GraduationCap, Gamepad2, Music, ShoppingBag } from "lucide-react"
+import Image from "next/image"
 
 const useCases = [
   {
-    icon: Video,
+    iconSrc: "/brand/card-icons/content-creation.png",
     title: "Content Creation",
     description: "Create engaging social media videos, YouTube shorts, and TikTok content with AI-generated visuals.",
-    gradient: "from-blue-500/20 to-cyan-500/20",
   },
   {
-    icon: Megaphone,
+    iconSrc: "/brand/card-icons/marketing-ads.png",
     title: "Marketing & Ads",
     description: "Generate eye-catching promotional videos and ad creatives without expensive production costs.",
-    gradient: "from-orange-500/20 to-amber-500/20",
   },
   {
-    icon: GraduationCap,
+    iconSrc: "/brand/card-icons/education.png",
     title: "Education",
     description: "Transform educational content into visual stories that engage students and simplify concepts.",
-    gradient: "from-green-500/20 to-emerald-500/20",
   },
   {
-    icon: Gamepad2,
+    iconSrc: "/brand/card-icons/game-development.png",
     title: "Game Development",
     description: "Create cutscenes, trailers, and promotional content for indie games and prototypes.",
-    gradient: "from-purple-500/20 to-pink-500/20",
   },
   {
-    icon: Music,
+    iconSrc: "/brand/card-icons/music-videos.png",
     title: "Music Videos",
     description: "Generate stunning visual accompaniments for music tracks and album releases.",
-    gradient: "from-rose-500/20 to-red-500/20",
   },
   {
-    icon: ShoppingBag,
+    iconSrc: "/brand/card-icons/ecommerce.png",
     title: "E-commerce",
     description: "Create product videos and walkthroughs to boost sales and customer engagement.",
-    gradient: "from-teal-500/20 to-cyan-500/20",
   },
 ]
 
@@ -58,8 +52,15 @@ export function UseCasesSection() {
             className="group p-6 rounded-2xl border border-white/10 bg-white/[0.03] hover:bg-white/[0.06] transition-all duration-300"
           >
             {/* Icon with gradient background */}
-            <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${useCase.gradient} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-              <useCase.icon className="w-7 h-7 text-foreground" />
+            <div className="mb-4 h-14 w-14 overflow-hidden rounded-xl group-hover:scale-105 transition-transform">
+              <Image
+                src={useCase.iconSrc}
+                alt=""
+                width={112}
+                height={112}
+                className="h-full w-full object-cover"
+                aria-hidden="true"
+              />
             </div>
 
             {/* Content */}

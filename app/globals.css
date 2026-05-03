@@ -50,3 +50,31 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  @keyframes prompt-hint {
+    0% {
+      opacity: 0;
+      transform: translateY(0.45rem);
+    }
+    14%,
+    72% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateY(-0.45rem);
+    }
+  }
+
+  .animate-prompt-hint {
+    animation: prompt-hint 3.2s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-prompt-hint {
+      animation: none;
+    }
+  }
+}

@@ -1,13 +1,12 @@
-import { Palette, Wand2, Ratio, Clock, Zap, Sparkles } from "lucide-react"
+import Image from "next/image"
 
 interface BentoCardProps {
   title: string
   description: string
-  icon: React.ElementType
-  gradient: string
+  iconSrc: string
 }
 
-const BentoCard = ({ title, description, icon: Icon, gradient }: BentoCardProps) => (
+const BentoCard = ({ title, description, iconSrc }: BentoCardProps) => (
   <div className="overflow-hidden rounded-2xl border border-white/20 flex flex-col justify-start items-start relative group hover:border-white/30 transition-colors">
     {/* Background with blur effect */}
     <div
@@ -23,8 +22,15 @@ const BentoCard = ({ title, description, icon: Icon, gradient }: BentoCardProps)
 
     <div className="self-stretch p-6 flex flex-col justify-start items-start gap-4 relative z-10">
       {/* Icon */}
-      <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${gradient} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-        <Icon className="w-6 h-6 text-foreground" />
+      <div className="w-14 h-14 overflow-hidden rounded-xl group-hover:scale-105 transition-transform">
+        <Image
+          src={iconSrc}
+          alt=""
+          width={112}
+          height={112}
+          className="h-full w-full object-cover"
+          aria-hidden="true"
+        />
       </div>
       
       {/* Content */}
@@ -40,38 +46,32 @@ const features: BentoCardProps[] = [
   {
     title: "Multiple Video Styles",
     description: "Choose from Cinematic, Anime, Realistic, Artistic, and Minimalist styles to match your creative vision.",
-    icon: Palette,
-    gradient: "from-purple-500/20 to-pink-500/20",
+    iconSrc: "/brand/card-icons/video-styles.png",
   },
   {
     title: "Smart AI Generation",
     description: "Advanced AI understands your prompts and creates fluid, coherent video sequences with natural motion.",
-    icon: Wand2,
-    gradient: "from-blue-500/20 to-cyan-500/20",
+    iconSrc: "/brand/card-icons/smart-generation.png",
   },
   {
     title: "Flexible Aspect Ratios",
     description: "Create videos in 16:9 for YouTube, 9:16 for TikTok/Reels, 1:1 for Instagram, or 4:3 for presentations.",
-    icon: Ratio,
-    gradient: "from-orange-500/20 to-amber-500/20",
+    iconSrc: "/brand/card-icons/aspect-ratios.png",
   },
   {
     title: "Variable Duration",
     description: "Generate 2, 4, 6, or 8-second clips perfect for social media, ads, or longer creative projects.",
-    icon: Clock,
-    gradient: "from-green-500/20 to-emerald-500/20",
+    iconSrc: "/brand/card-icons/duration.png",
   },
   {
     title: "Instant Preview",
     description: "See your generation settings and preview metadata instantly before committing to full generation.",
-    icon: Zap,
-    gradient: "from-yellow-500/20 to-orange-500/20",
+    iconSrc: "/brand/card-icons/instant-preview.png",
   },
   {
     title: "No Registration Required",
     description: "Try the complete workflow without signing up. Experience the interface and test your prompts freely.",
-    icon: Sparkles,
-    gradient: "from-teal-500/20 to-cyan-500/20",
+    iconSrc: "/brand/card-icons/no-registration.png",
   },
 ]
 

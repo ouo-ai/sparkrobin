@@ -44,6 +44,11 @@ interface TaskStatusErrorResponse {
 }
 
 const ACTIVE_TASK_STATUSES: GenerateStatus[] = ["submitted", "pending", "processing"]
+const promptSuggestions = [
+  "A majestic eagle soaring through golden sunset clouds over mountain peaks...",
+  "A futuristic city street glowing with neon reflections after rain...",
+  "Cherry blossom petals drifting in slow motion across a quiet garden...",
+]
 
 function getPreviewAspectClass(aspectRatio: string): string {
   if (aspectRatio === "9:16") {
@@ -93,7 +98,20 @@ export function VideoGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [result, setResult] = useState<GenerateResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [promptHintIndex, setPromptHintIndex] = useState(0)
   const taskIsActive = Boolean(result?.taskId && !result.previewMode && ACTIVE_TASK_STATUSES.includes(result.status))
+
+  useEffect(() => {
+    if (prompt) {
+      return
+    }
+
+    const intervalId = setInterval(() => {
+      setPromptHintIndex((current) => (current + 1) % promptSuggestions.length)
+    }, 3200)
+
+    return () => clearInterval(intervalId)
+  }, [prompt])
 
   useEffect(() => {
     if (!result?.taskId || result.previewMode || !ACTIVE_TASK_STATUSES.includes(result.status)) {
@@ -220,17 +238,26 @@ export function VideoGenerator() {
         <div className="p-5 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
           {/* Prompt Input */}
           <div className="space-y-2 sm:space-y-3">
-            <label className="text-foreground text-sm sm:text-base font-medium flex items-center gap-2">
+            <label htmlFor="video-prompt" className="text-foreground text-sm sm:text-base font-medium flex items-center gap-2">
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               Describe your video
             </label>
-            <Textarea
-              placeholder="A majestic eagle soaring through golden sunset clouds over mountain peaks..."
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[96px] md:min-h-[128px] bg-white/5 border-white/10 text-sm sm:text-base text-foreground placeholder:text-muted-foreground/50 resize-none focus:border-primary/50 focus:ring-primary/20"
-              maxLength={2500}
-            />
+            <div className="relative">
+              <Textarea
+                id="video-prompt"
+                value={prompt}
+                onChange={(e) => setPrompt(e.target.value)}
+                className="min-h-[96px] md:min-h-[128px] bg-white/5 border-white/10 text-sm sm:text-base text-foreground resize-none focus:border-primary/50 focus:ring-primary/20"
+                maxLength={2500}
+              />
+              {!prompt && (
+                <div className="pointer-events-none absolute left-3 right-3 top-3 overflow-hidden text-left text-sm leading-6 text-zinc-300/55 sm:left-4 sm:right-4 sm:top-3 sm:text-base">
+                  <span key={promptHintIndex} className="block animate-prompt-hint">
+                    {promptSuggestions[promptHintIndex]}
+                  </span>
+                </div>
+              )}
+            </div>
             <div className="flex justify-between gap-3 text-xs sm:text-sm text-muted-foreground/70">
               <span>Be descriptive for better results</span>
               <span>{prompt.length}/2500</span>
@@ -405,7 +432,7 @@ export function VideoGenerator() {
         {/* Footer Notice */}
         <div className="px-5 py-3 sm:px-6 sm:py-4 md:px-8 border-t border-white/10 bg-white/[0.02]">
           <p className="text-muted-foreground/60 text-xs sm:text-sm text-center">
-            Describe a scene, choose a format, and generate your video directly in Spark Robin.
+            Describe a scene, choose a format, and start the Spark Robin video workflow. If live generation is unavailable, the page returns a preview result.
           </p>
         </div>
       </div>
