@@ -1,5 +1,5 @@
 const DEFAULT_APIMART_BASE_URL = "https://api.apimart.ai"
-const KLING_MODEL = "kling-v2-6"
+const APIMART_VIDEO_MODEL = "kling-v2-6"
 
 const STYLE_PROMPTS: Record<string, string> = {
   cinematic: "cinematic lighting, natural camera movement, film-grade detail",
@@ -50,12 +50,12 @@ interface ApimartTaskResponse {
   message?: unknown
 }
 
-export interface KlingTaskSubmission {
+export interface ApimartVideoTaskSubmission {
   taskId: string
   status: VideoTaskStatus
 }
 
-export interface KlingTaskStatus {
+export interface ApimartVideoTaskStatus {
   taskId: string
   status: VideoTaskStatus
   progress?: number
@@ -83,17 +83,17 @@ export function getApimartConfig(): ApimartConfig | null {
   }
 
   const baseUrl = (process.env.APIMART_BASE_URL || DEFAULT_APIMART_BASE_URL).replace(/\/+$/, "")
-  const mode = process.env.APIMART_KLING_MODE === "pro" ? "pro" : "std"
+  const mode = process.env.APIMART_VIDEO_MODE === "pro" ? "pro" : "std"
 
   return { apiKey, baseUrl, mode }
 }
 
-export function normalizeKlingDuration(duration: unknown): 5 | 10 {
+export function normalizeVideoDuration(duration: unknown): 5 | 10 {
   const numericDuration = typeof duration === "number" ? duration : Number(duration)
   return numericDuration > 5 ? 10 : 5
 }
 
-export function normalizeKlingAspectRatio(aspectRatio: unknown): "16:9" | "9:16" | "1:1" {
+export function normalizeVideoAspectRatio(aspectRatio: unknown): "16:9" | "9:16" | "1:1" {
   if (aspectRatio === "9:16" || aspectRatio === "1:1") {
     return aspectRatio
   }
@@ -105,26 +105,26 @@ export function normalizeStyle(style: unknown): string {
   return typeof style === "string" && STYLE_PROMPTS[style] ? style : "cinematic"
 }
 
-export function formatKlingPrompt(prompt: string, style: string): string {
+export function formatVideoPrompt(prompt: string, style: string): string {
   const stylePrompt = STYLE_PROMPTS[style] || STYLE_PROMPTS.cinematic
   return `${prompt.trim()}\n\nVisual style: ${stylePrompt}.`
 }
 
-export async function submitKlingVideoTask(params: {
+export async function submitApimartVideoTask(params: {
   prompt: string
   style: string
   duration: 5 | 10
   aspectRatio: "16:9" | "9:16" | "1:1"
-}): Promise<KlingTaskSubmission> {
+}): Promise<ApimartVideoTaskSubmission> {
   const config = getApimartConfig()
 
   if (!config) {
-    throw new ApimartRequestError("APIMart API key is not configured.", 503)
+    throw new ApimartRequestError("Video generation is temporarily unavailable.", 503)
   }
 
   const payload = {
-    model: KLING_MODEL,
-    prompt: formatKlingPrompt(params.prompt, params.style),
+    model: APIMART_VIDEO_MODEL,
+    prompt: formatVideoPrompt(params.prompt, params.style),
     mode: config.mode,
     duration: params.duration,
     aspect_ratio: params.aspectRatio,
@@ -142,14 +142,14 @@ export async function submitKlingVideoTask(params: {
   const data = await readJson<ApimartGenerationResponse>(response)
 
   if (!response.ok || data.code !== 200) {
-    throw toApimartError(response.status, data)
+    throw toApimartError(response.status)
   }
 
   const task = Array.isArray(data.data) ? data.data[0] : data.data
   const taskId = task?.task_id || task?.id
 
   if (!taskId) {
-    throw new ApimartRequestError("APIMart did not return a task id.", 502)
+    throw new ApimartRequestError("Video generation did not return a task id.", 502)
   }
 
   return {
@@ -158,11 +158,11 @@ export async function submitKlingVideoTask(params: {
   }
 }
 
-export async function getKlingTaskStatus(taskId: string): Promise<KlingTaskStatus> {
+export async function getApimartVideoTaskStatus(taskId: string): Promise<ApimartVideoTaskStatus> {
   const config = getApimartConfig()
 
   if (!config) {
-    throw new ApimartRequestError("APIMart API key is not configured.", 503)
+    throw new ApimartRequestError("Video generation is temporarily unavailable.", 503)
   }
 
   const response = await fetch(`${config.baseUrl}/v1/tasks/${encodeURIComponent(taskId)}?language=en`, {
@@ -174,7 +174,7 @@ export async function getKlingTaskStatus(taskId: string): Promise<KlingTaskStatu
   const data = await readJson<ApimartTaskResponse>(response)
 
   if (!response.ok || data.code !== 200 || !data.data) {
-    throw toApimartError(response.status, data)
+    throw toApimartError(response.status)
   }
 
   const result = data.data.result
@@ -196,26 +196,24 @@ async function readJson<T>(response: Response): Promise<T> {
   try {
     return await response.json() as T
   } catch {
-    throw new ApimartRequestError("APIMart returned an invalid JSON response.", 502)
+    throw new ApimartRequestError("Video generation returned an invalid response.", 502)
   }
 }
 
-function toApimartError(statusCode: number, data: ApimartGenerationResponse | ApimartTaskResponse): ApimartRequestError {
-  const providerMessage = extractErrorMessage(data.error) || extractErrorMessage(data.message)
-
+function toApimartError(statusCode: number): ApimartRequestError {
   if (statusCode === 401) {
-    return new ApimartRequestError("APIMart rejected the API key. Check APIMART_API_KEY.", 401)
+    return new ApimartRequestError("Video generation is temporarily unavailable.", 401)
   }
 
   if (statusCode === 402) {
-    return new ApimartRequestError("APIMart account balance is insufficient.", 402)
+    return new ApimartRequestError("Video generation is temporarily unavailable.", 402)
   }
 
   if (statusCode === 429) {
-    return new ApimartRequestError("APIMart rate limit reached. Try again soon.", 429)
+    return new ApimartRequestError("Generation is busy right now. Try again soon.", 429)
   }
 
-  return new ApimartRequestError(providerMessage || `APIMart request failed with status ${statusCode}.`, statusCode || 502)
+  return new ApimartRequestError("Video generation request failed. Try adjusting the prompt or settings.", statusCode || 502)
 }
 
 function normalizeTaskStatus(status: unknown, fallback: VideoTaskStatus): VideoTaskStatus {

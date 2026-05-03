@@ -13,7 +13,7 @@ const faqData = [
   {
     question: "Do I need to register to try Spark Robin?",
     answer:
-      "No registration is required to try our demo. You can immediately test the workflow and see how the generator works. The demo provides a complete preview of the interface and returns mock generation data so you can explore all features freely.",
+      "No registration is required. You can immediately test the workflow, enter a prompt, choose your format, and see generation status directly in the page.",
   },
   {
     question: "What video styles does Spark Robin support?",
@@ -23,17 +23,17 @@ const faqData = [
   {
     question: "What aspect ratios and durations are available?",
     answer:
-      "Spark Robin supports 16:9 (landscape, ideal for YouTube), 9:16 (portrait, perfect for TikTok and Instagram Reels), 1:1 (square, great for Instagram posts), and 4:3 (traditional format). Video durations range from 2 to 8 seconds.",
+      "Spark Robin supports 16:9 (landscape, ideal for YouTube), 9:16 (portrait, perfect for TikTok and Instagram Reels), and 1:1 (square, great for Instagram posts). Video durations include 5 and 10 seconds.",
   },
   {
-    question: "Is this demo generating real AI videos?",
+    question: "Does Spark Robin generate videos from prompts?",
     answer:
-      "The demo provides a workflow preview with mock responses. To generate actual AI videos, you would need to connect your own video generation provider API key. This allows you to fully explore the interface without any commitment.",
+      "Yes. Write a descriptive prompt, choose a visual style, aspect ratio, and duration, then start generation. Spark Robin tracks progress and shows the result when it is ready.",
   },
   {
-    question: "How do I get started with real video generation?",
+    question: "How do I get better video results?",
     answer:
-      "To generate real AI videos, you'll need to connect a video generation provider (such as compatible AI video APIs). The demo is designed to let you test the workflow first, then seamlessly upgrade when you're ready for production use.",
+      "Use concrete details about the subject, setting, camera movement, lighting, and mood. Short, specific prompts usually produce more predictable results than vague requests.",
   },
 ]
 

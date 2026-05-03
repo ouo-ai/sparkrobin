@@ -8,7 +8,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'Spark Robin AI Video Generator | Text to Video Demo',
-  description: 'Spark Robin is an AI video generator demo for turning text and images into video concepts. Try the no-registration workflow preview, then connect a provider for real video output.',
+  description: 'Spark Robin is an AI video generator for turning text and image ideas into short video concepts with a no-registration workflow.',
   keywords: ['Spark Robin', 'sparkrobin', 'spark robin ai', 'Spark Robin AI video generator', 'AI video generator', 'text to video generator', 'image to video generator'],
   authors: [{ name: 'Spark Robin' }],
   creator: 'Spark Robin',

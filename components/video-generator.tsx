@@ -12,8 +12,6 @@ type GenerateStatus = "demo" | "submitted" | "pending" | "processing" | "complet
 interface GenerateResponse {
   id: string
   taskId?: string
-  provider: "demo" | "apimart"
-  model: "demo" | "kling-v2-6"
   status: GenerateStatus
   prompt: string
   style: string
@@ -61,18 +59,18 @@ function getPreviewAspectClass(aspectRatio: string): string {
 
 function getStatusLabel(result: GenerateResponse): string {
   if (result.demoMode) {
-    return "Demo Preview"
+    return "Workflow Preview"
   }
 
   if (result.status === "completed") {
-    return "Kling Video Ready"
+    return "Video Ready"
   }
 
   if (typeof result.progress === "number") {
-    return `Generating with Kling v2.6 (${result.progress}%)`
+    return `Generating video (${result.progress}%)`
   }
 
-  return "Generating with Kling v2.6"
+  return "Generating video"
 }
 
 function getNoticeClasses(result: GenerateResponse): string {
@@ -306,7 +304,7 @@ export function VideoGenerator() {
             {isGenerating || taskIsActive ? (
               <>
                 <Spinner className="w-4 h-4 mr-2" />
-                {taskIsActive ? "Generating with Kling..." : "Submitting to Kling..."}
+                {taskIsActive ? "Generating video..." : "Starting generation..."}
               </>
             ) : (
               <>
@@ -333,7 +331,7 @@ export function VideoGenerator() {
                 <div className="flex-1 min-w-0">
                   <h4 className="text-foreground text-sm font-medium truncate">{result.previewTitle}</h4>
                   <p className="text-muted-foreground text-xs mt-0.5">
-                    {result.model === "kling-v2-6" ? "Kling v2.6" : "Demo"} • {result.style} • {result.aspectRatio} • {result.duration}s • {result.frames} frames
+                    {result.style} • {result.aspectRatio} • {result.duration}s • {result.frames} frames
                   </p>
                 </div>
               </div>
@@ -390,7 +388,7 @@ export function VideoGenerator() {
                   )}
                   {!result.demoMode && result.status !== "completed" && (
                     <p className="mt-1 text-muted-foreground/80">
-                      Keep this tab open while Spark Robin checks the APIMart task status.
+                      Keep this tab open while Spark Robin checks the generation status.
                     </p>
                   )}
                   {result.errorMessage && (
@@ -407,7 +405,7 @@ export function VideoGenerator() {
         {/* Footer Notice */}
         <div className="px-5 py-3 sm:px-6 sm:py-4 md:px-8 border-t border-white/10 bg-white/[0.02]">
           <p className="text-muted-foreground/60 text-xs sm:text-sm text-center">
-            Powered by Kling v2.6 through APIMart when configured. Demo mode stays available without provider credentials.
+            Describe a scene, choose a format, and generate your video directly in Spark Robin.
           </p>
         </div>
       </div>

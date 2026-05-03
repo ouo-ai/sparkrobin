@@ -2,10 +2,10 @@ import { NextRequest, NextResponse } from "next/server"
 import {
   ApimartRequestError,
   getApimartConfig,
-  normalizeKlingAspectRatio,
-  normalizeKlingDuration,
+  normalizeVideoAspectRatio,
+  normalizeVideoDuration,
   normalizeStyle,
-  submitKlingVideoTask,
+  submitApimartVideoTask,
 } from "@/lib/apimart"
 
 interface GenerateRequest {
@@ -18,8 +18,6 @@ interface GenerateRequest {
 interface GenerateResponse {
   id: string
   taskId?: string
-  provider: "demo" | "apimart"
-  model: "demo" | "kling-v2-6"
   status: "demo" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
   prompt: string
   style: string
@@ -58,8 +56,6 @@ function getDemoResponse(params: {
 
   return {
     id,
-    provider: "demo",
-    model: "demo",
     status: "demo",
     prompt: params.prompt,
     style: params.style,
@@ -68,7 +64,7 @@ function getDemoResponse(params: {
     estimatedSeconds: Math.ceil(params.duration * 2.5),
     previewTitle: getPreviewTitle(params.prompt),
     frames: params.duration * 24,
-    message: "Demo mode is active because APIMart API credentials are not configured.",
+    message: "Preview mode is active. Submit a prompt to explore the workflow.",
     demoMode: true,
   }
 }
@@ -79,8 +75,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
 
     const prompt = typeof body.prompt === "string" ? body.prompt.trim() : ""
     const style = normalizeStyle(body.style)
-    const duration = normalizeKlingDuration(body.duration)
-    const aspectRatio = normalizeKlingAspectRatio(body.aspectRatio)
+    const duration = normalizeVideoDuration(body.duration)
+    const aspectRatio = normalizeVideoAspectRatio(body.aspectRatio)
 
     if (!prompt) {
       return NextResponse.json(
@@ -107,13 +103,11 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       return NextResponse.json(getDemoResponse({ prompt, style, duration, aspectRatio }))
     }
 
-    const task = await submitKlingVideoTask({ prompt, style, duration, aspectRatio })
+    const task = await submitApimartVideoTask({ prompt, style, duration, aspectRatio })
 
     return NextResponse.json({
       id: task.taskId,
       taskId: task.taskId,
-      provider: "apimart",
-      model: "kling-v2-6",
       status: task.status,
       prompt,
       style,
@@ -123,7 +117,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       previewTitle: getPreviewTitle(prompt),
       frames: duration * 24,
       progress: 0,
-      message: "Kling v2.6 task submitted through APIMart. Status will update automatically.",
+      message: "Video generation started. Status will update automatically.",
       demoMode: false,
     })
   } catch (error) {
@@ -141,7 +135,7 @@ export async function GET(): Promise<NextResponse<{ message: string; endpoints: 
   return NextResponse.json({
     message: "Spark Robin AI Video Generator API",
     endpoints: {
-      POST: "Submit a Kling v2.6 video generation task through APIMart, or return demo mode without credentials.",
+      POST: "Submit a video generation task, or return preview mode when generation is unavailable.",
     },
   })
 }

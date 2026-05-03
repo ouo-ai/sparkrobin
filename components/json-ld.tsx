@@ -4,7 +4,7 @@ export function JsonLd() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Spark Robin",
-    description: "Spark Robin is an AI video generator demo that previews text-to-video and image-to-video workflows. The public demo returns mock generation data until a real provider key is connected.",
+    description: "Spark Robin is an AI video generator for turning text prompts and image ideas into short video concepts with live generation status.",
     url: siteUrl,
     image: `${siteUrl}/brand/og-image.png`,
     applicationCategory: "MultimediaApplication",
@@ -21,8 +21,8 @@ export function JsonLd() {
       "Multiple Video Styles",
       "Custom Aspect Ratios",
       "Variable Duration",
-        "No Registration Required for Demo",
-        "Mock API Response Preview",
+      "No Registration Required",
+      "Live Generation Status",
     ],
     potentialAction: {
       "@type": "UseAction",
@@ -48,7 +48,7 @@ export function JsonLd() {
         name: "Do I need to register to try Spark Robin?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "No registration is required to try our demo. You can immediately test the workflow and see how the generator works. For production use with real AI video generation, you'll need to connect your own provider API key.",
+          text: "No registration is required. You can immediately enter a prompt, choose a format, and track generation status directly in the page.",
         },
       },
       {
@@ -64,7 +64,7 @@ export function JsonLd() {
         name: "What aspect ratios and durations are available?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Spark Robin supports 16:9 (landscape), 9:16 (portrait/vertical), 1:1 (square), and 4:3 aspect ratios. Video durations range from 2 to 8 seconds.",
+          text: "Spark Robin supports 16:9 (landscape), 9:16 (portrait/vertical), and 1:1 (square) aspect ratios. Video durations include 5 and 10 seconds.",
         },
       },
       {
@@ -72,7 +72,7 @@ export function JsonLd() {
         name: "Is this a free AI video generator?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "The demo experience is free and requires no registration. This allows you to explore the workflow and interface. For generating real AI videos, you'll need to connect a video generation provider.",
+          text: "Spark Robin can be tried without registration. Enter a prompt, choose your settings, and start a video generation workflow directly from the page.",
         },
       },
     ],

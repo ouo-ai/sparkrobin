@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import { ApimartRequestError, getKlingTaskStatus } from "@/lib/apimart"
+import { ApimartRequestError, getApimartVideoTaskStatus } from "@/lib/apimart"
 
 interface TaskStatusResponse {
   taskId: string
@@ -26,7 +26,7 @@ export async function GET(_request: Request, { params }: RouteContext): Promise<
   }
 
   try {
-    const task = await getKlingTaskStatus(taskId)
+    const task = await getApimartVideoTaskStatus(taskId)
 
     return NextResponse.json({
       ...task,
@@ -34,7 +34,7 @@ export async function GET(_request: Request, { params }: RouteContext): Promise<
     })
   } catch (error) {
     const statusCode = error instanceof ApimartRequestError ? error.statusCode : 502
-    const errorMessage = error instanceof Error ? error.message : "Failed to fetch APIMart task status"
+    const errorMessage = error instanceof Error ? error.message : "Failed to fetch video task status"
 
     return NextResponse.json(
       { error: errorMessage },
@@ -46,21 +46,21 @@ export async function GET(_request: Request, { params }: RouteContext): Promise<
 function getTaskMessage(status: TaskStatusResponse["status"], progress?: number, hasVideoUrl = false): string {
   if (status === "completed") {
     return hasVideoUrl
-      ? "Your Kling v2.6 video is ready."
-      : "Kling v2.6 completed the task, but APIMart did not return a video URL yet."
+      ? "Your video is ready."
+      : "The video is ready, but the playback link is still unavailable. Try refreshing in a moment."
   }
 
   if (status === "failed") {
-    return "Kling v2.6 generation failed. Try a simpler prompt or adjust the settings."
+    return "Video generation failed. Try a simpler prompt or adjust the settings."
   }
 
   if (status === "cancelled") {
-    return "This Kling v2.6 task was cancelled."
+    return "This video task was cancelled."
   }
 
   if (typeof progress === "number") {
-    return `Kling v2.6 is generating your video: ${progress}% complete.`
+    return `Generating your video: ${progress}% complete.`
   }
 
-  return "Kling v2.6 is generating your video."
+  return "Generating your video."
 }
