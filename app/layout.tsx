@@ -51,6 +51,9 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
+  other: {
+    'naver-site-verification': '1eb2dc2bc9482cde29c87d8795d5a560ee792421',
+  },
   icons: {
     icon: [
       {
