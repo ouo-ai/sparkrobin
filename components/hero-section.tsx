@@ -5,8 +5,8 @@ import { VideoGenerator } from "./video-generator"
 export function HeroSection() {
   return (
     <section
-      className="flex flex-col items-center text-center relative mx-auto rounded-2xl overflow-hidden my-6 py-0 px-4
-         w-full min-h-[700px] md:w-[1220px] md:min-h-[900px] lg:min-h-[1000px] md:px-0"
+      className="flex flex-col items-center text-center relative left-1/2 w-screen -translate-x-1/2 overflow-hidden py-0 px-4
+         min-h-[700px] md:min-h-[900px] lg:min-h-[1000px] md:px-0"
     >
       {/* SVG Background */}
       <div className="absolute inset-0 z-0">
@@ -274,7 +274,7 @@ export function HeroSection() {
 
           <defs>
             <clipPath id="clip0_186_1134">
-              <rect width="1220" height="810" rx="16" fill="hsl(var(--foreground))" />
+              <rect width="1220" height="810" fill="hsl(var(--foreground))" />
             </clipPath>
           </defs>
         </svg>

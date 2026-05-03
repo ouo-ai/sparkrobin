@@ -14,7 +14,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-background relative overflow-hidden pb-0">
       <JsonLd />
       <div className="relative z-10">
-        <main id="generator" className="max-w-[1320px] mx-auto relative">
+        <main id="generator" className="relative">
           <HeroSection />
         </main>
         <AnimatedSection className="relative z-10 max-w-[1320px] mx-auto px-6 mt-8 md:mt-16" delay={0.1}>
