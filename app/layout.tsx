@@ -88,6 +88,7 @@ export default function RootLayout({
     <html lang="en">
       <body className="font-sans antialiased">
         {children}
+        <script defer data-domain="sparkrobin.ai" src="https://plau.origai.net/js/script.js" />
         {process.env.NODE_ENV === 'production' && <Analytics />}
       </body>
     </html>
