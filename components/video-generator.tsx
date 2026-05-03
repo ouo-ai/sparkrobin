@@ -432,7 +432,7 @@ export function VideoGenerator() {
         {/* Footer Notice */}
         <div className="px-5 py-3 sm:px-6 sm:py-4 md:px-8 border-t border-white/10 bg-white/[0.02]">
           <p className="text-muted-foreground/60 text-xs sm:text-sm text-center">
-            Describe a scene, choose a format, and start the Spark Robin video workflow. If live generation is unavailable, the page returns a preview result.
+            Describe a scene, choose a format, and generate your video directly in Spark Robin.
           </p>
         </div>
       </div>

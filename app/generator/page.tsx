@@ -9,11 +9,8 @@ import { Badge } from "@/components/ui/badge"
 export const metadata: Metadata = {
   title: "Spark Robin AI Video Generator | Create Videos Online",
   description:
-    "Use the Spark Robin AI video generator workflow to create text-to-video and image-to-video concepts online with no registration.",
+    "Use the Spark Robin AI video generator to create text-to-video and image-to-video clips online with no registration. Choose styles, formats, and short video durations.",
   keywords: [
-    "Spark Robin",
-    "SparkRobin",
-    "SparkRobin.video",
     "Spark Robin AI video generator",
     "AI video generator",
     "text to video generator",
@@ -27,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Spark Robin AI Video Generator | Create Videos Online",
     description:
-      "Create short AI video concepts from prompts with Spark Robin. Choose style, aspect ratio, and duration in a no-registration generator workflow.",
+      "Create short AI videos from prompts with Spark Robin. Choose style, aspect ratio, and duration in a no-registration generator.",
     url: "/generator",
     siteName: "Spark Robin",
     images: [
@@ -43,12 +40,12 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Spark Robin AI Video Generator",
     description:
-      "Preview short text-to-video and image-to-video concepts online with Spark Robin.",
+      "Generate short text-to-video and image-to-video clips online with Spark Robin.",
     images: ["/brand/og-image.png"],
   },
 }
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sparkrobin.video"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sparkrobin.ai"
 
 const steps = [
   {
@@ -97,7 +94,7 @@ const faqs = [
   {
     question: "What is the Spark Robin AI video generator?",
     answer:
-      "The Spark Robin AI video generator is an online workflow for turning text and image ideas into short AI video concepts. Enter a scene, choose a style and format, then start from the browser.",
+      "The Spark Robin AI video generator is an online tool for turning text and image ideas into short AI-generated videos. Enter a scene, choose a style and format, then start generation from the browser.",
   },
   {
     question: "Can I use Spark Robin as a text to video generator?",
@@ -132,8 +129,8 @@ export default function GeneratorPage() {
                 Spark Robin AI Video Generator
               </h1>
               <p className="mt-5 max-w-2xl text-base font-medium leading-relaxed text-muted-foreground md:text-lg">
-                Use the Spark Robin AI video generator workflow to create short text-to-video and image-to-video concepts online.
-                Write a prompt, choose a visual style, pick a format, and start with no registration.
+                Use the Spark Robin AI video generator to create short text-to-video and image-to-video clips online.
+                Write a prompt, choose a visual style, pick a format, and generate with no registration.
               </p>
               <div className="mt-8 grid w-full max-w-2xl gap-3 text-sm text-foreground/85 sm:grid-cols-2">
                 {["Text-to-video prompts", "Image idea workflows", "5s and 10s clips", "16:9, 9:16, and 1:1"].map((item) => (
@@ -235,7 +232,7 @@ function GeneratorJsonLd() {
     "@type": "WebApplication",
     name: "Spark Robin AI Video Generator",
     description:
-      "Spark Robin AI video generator creates short text-to-video and image-to-video concepts online with style, format, and duration controls.",
+      "Spark Robin AI video generator creates short text-to-video and image-to-video clips online with style, format, and duration controls.",
     url: `${siteUrl}/generator`,
     image: `${siteUrl}/brand/og-image.png`,
     applicationCategory: "MultimediaApplication",

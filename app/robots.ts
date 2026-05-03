@@ -1,7 +1,6 @@
 import type { MetadataRoute } from "next"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sparkrobin.video"
-const siteHost = new URL(siteUrl).host
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sparkrobin.ai"
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -10,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
     },
     sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteHost,
+    host: siteUrl,
   }
 }

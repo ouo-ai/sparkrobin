@@ -1,10 +1,10 @@
 export function JsonLd() {
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sparkrobin.video"
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sparkrobin.ai"
   const webApplicationSchema = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Spark Robin",
-    description: "Spark Robin is an AI video generator workflow for turning text prompts and image ideas into short video concepts with no registration.",
+    description: "Spark Robin is an AI video generator for turning text prompts and image ideas into short video concepts with live generation status.",
     url: siteUrl,
     image: `${siteUrl}/brand/og-image.png`,
     applicationCategory: "MultimediaApplication",
@@ -13,7 +13,7 @@ export function JsonLd() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "Free no-registration workflow preview available",
+      description: "Free no-registration workflow available",
     },
     featureList: [
       "Text to Video Generation",
@@ -40,7 +40,7 @@ export function JsonLd() {
         name: "What is Spark Robin?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Spark Robin is an AI video generator workflow for turning text prompts and image ideas into short video concepts. It supports cinematic, anime, realistic, artistic, and minimalist settings.",
+          text: "Spark Robin is an AI video generator that transforms your text prompts and images into stunning, fluid videos. It uses advanced AI models to create cinematic, anime, realistic, and artistic video content.",
         },
       },
       {
@@ -72,7 +72,7 @@ export function JsonLd() {
         name: "Is this a free AI video generator?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Spark Robin can be tried without registration. Enter a prompt, choose your settings, and preview the video generation workflow directly from the page.",
+          text: "Spark Robin can be tried without registration. Enter a prompt, choose your settings, and start a video generation workflow directly from the page.",
         },
       },
     ],

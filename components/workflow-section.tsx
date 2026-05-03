@@ -14,7 +14,7 @@ const steps = [
   {
     icon: Wand2,
     title: "AI Generation",
-    description: "Spark Robin turns your prompt into a structured video workflow with motion, lighting, and style settings.",
+    description: "Our AI transforms your prompt into fluid video frames with motion, lighting, and detail.",
   },
   {
     icon: Download,

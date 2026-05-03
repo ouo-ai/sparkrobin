@@ -64,7 +64,7 @@ function getPreviewResponse(params: {
     estimatedSeconds: Math.ceil(params.duration * 2.5),
     previewTitle: getPreviewTitle(params.prompt),
     frames: params.duration * 24,
-    message: "Preview mode is active because a live video provider is not configured for this deployment.",
+    message: "Preview mode is active. Submit a prompt to explore the workflow.",
     previewMode: true,
   }
 }
@@ -135,7 +135,7 @@ export async function GET(): Promise<NextResponse<{ message: string; endpoints: 
   return NextResponse.json({
     message: "Spark Robin AI Video Generator API",
     endpoints: {
-      POST: "Submit a video generation task, or return preview mode when the live provider is unavailable.",
+      POST: "Submit a video generation task, or return preview mode when generation is unavailable.",
     },
   })
 }

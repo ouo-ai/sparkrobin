@@ -8,7 +8,7 @@ const faqData = [
   {
     question: "What is Spark Robin?",
     answer:
-      "Spark Robin is an AI video generator workflow that turns text prompts and image ideas into short video concepts with style, format, and duration controls.",
+      "Spark Robin is an AI video generator that transforms your text prompts and images into stunning, fluid videos. It uses advanced AI models to create cinematic, anime, realistic, and artistic video content without requiring any video editing skills.",
   },
   {
     question: "Do I need to register to try Spark Robin?",
@@ -28,7 +28,7 @@ const faqData = [
   {
     question: "Does Spark Robin generate videos from prompts?",
     answer:
-      "Yes. Write a descriptive prompt, choose a visual style, aspect ratio, and duration, then start the workflow. When live generation is available, Spark Robin tracks progress and shows the result when it is ready.",
+      "Yes. Write a descriptive prompt, choose a visual style, aspect ratio, and duration, then start generation. Spark Robin tracks progress and shows the result when it is ready.",
   },
   {
     question: "How do I get better video results?",
