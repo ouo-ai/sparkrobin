@@ -446,7 +446,7 @@ export function HeroSection() {
       </div>
 
       {/* Video Generator Panel */}
-      <div className="relative z-10 w-full max-w-2xl px-4 mb-8">
+      <div className="relative z-10 w-full max-w-4xl px-4 sm:px-6 mb-8">
         <VideoGenerator />
       </div>
     </section>

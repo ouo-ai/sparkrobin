@@ -68,53 +68,53 @@ export function VideoGenerator() {
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-4xl mx-auto">
       <div className="rounded-2xl border border-white/20 overflow-hidden" style={{
         background: "rgba(231, 236, 235, 0.06)",
         backdropFilter: "blur(12px)",
       }}>
         {/* Header */}
-        <div className="px-5 py-4 border-b border-white/10 flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center">
-            <Film className="w-4 h-4 text-primary" />
+        <div className="px-5 py-4 sm:px-6 sm:py-5 md:px-8 border-b border-white/10 flex items-center gap-3 sm:gap-4">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center">
+            <Film className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-foreground text-sm font-medium">AI Video Generator</h3>
-            <p className="text-muted-foreground text-xs">No registration required</p>
+            <h3 className="text-foreground text-sm sm:text-base font-medium">AI Video Generator</h3>
+            <p className="text-muted-foreground text-xs sm:text-sm">No registration required</p>
           </div>
         </div>
 
         {/* Input Section */}
-        <div className="p-5 space-y-4">
+        <div className="p-5 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
           {/* Prompt Input */}
-          <div className="space-y-2">
-            <label className="text-foreground text-sm font-medium flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-primary" />
+          <div className="space-y-2 sm:space-y-3">
+            <label className="text-foreground text-sm sm:text-base font-medium flex items-center gap-2">
+              <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
               Describe your video
             </label>
             <Textarea
               placeholder="A majestic eagle soaring through golden sunset clouds over mountain peaks..."
               value={prompt}
               onChange={(e) => setPrompt(e.target.value)}
-              className="min-h-[80px] bg-white/5 border-white/10 text-foreground placeholder:text-muted-foreground/50 resize-none focus:border-primary/50 focus:ring-primary/20"
+              className="min-h-[96px] md:min-h-[128px] bg-white/5 border-white/10 text-sm sm:text-base text-foreground placeholder:text-muted-foreground/50 resize-none focus:border-primary/50 focus:ring-primary/20"
               maxLength={500}
             />
-            <div className="flex justify-between text-xs text-muted-foreground/70">
+            <div className="flex justify-between gap-3 text-xs sm:text-sm text-muted-foreground/70">
               <span>Be descriptive for better results</span>
               <span>{prompt.length}/500</span>
             </div>
           </div>
 
           {/* Controls Grid */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {/* Style */}
-            <div className="space-y-1.5">
-              <label className="text-muted-foreground text-xs font-medium flex items-center gap-1.5">
-                <Palette className="w-3 h-3" />
+            <div className="col-span-2 sm:col-span-1 space-y-1.5 sm:space-y-2">
+              <label className="text-muted-foreground text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+                <Palette className="w-3 h-3 sm:w-4 sm:h-4" />
                 Style
               </label>
               <Select value={style} onValueChange={setStyle}>
-                <SelectTrigger className="bg-white/5 border-white/10 text-foreground text-sm h-9">
+                <SelectTrigger className="bg-white/5 border-white/10 text-foreground text-sm sm:text-base h-10 sm:h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -128,13 +128,13 @@ export function VideoGenerator() {
             </div>
 
             {/* Aspect Ratio */}
-            <div className="space-y-1.5">
-              <label className="text-muted-foreground text-xs font-medium flex items-center gap-1.5">
-                <Ratio className="w-3 h-3" />
+            <div className="space-y-1.5 sm:space-y-2">
+              <label className="text-muted-foreground text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+                <Ratio className="w-3 h-3 sm:w-4 sm:h-4" />
                 Aspect
               </label>
               <Select value={aspectRatio} onValueChange={setAspectRatio}>
-                <SelectTrigger className="bg-white/5 border-white/10 text-foreground text-sm h-9">
+                <SelectTrigger className="bg-white/5 border-white/10 text-foreground text-sm sm:text-base h-10 sm:h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -147,13 +147,13 @@ export function VideoGenerator() {
             </div>
 
             {/* Duration */}
-            <div className="space-y-1.5">
-              <label className="text-muted-foreground text-xs font-medium flex items-center gap-1.5">
-                <Clock className="w-3 h-3" />
+            <div className="space-y-1.5 sm:space-y-2">
+              <label className="text-muted-foreground text-xs sm:text-sm font-medium flex items-center gap-1.5 sm:gap-2">
+                <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                 Duration
               </label>
               <Select value={duration} onValueChange={setDuration}>
-                <SelectTrigger className="bg-white/5 border-white/10 text-foreground text-sm h-9">
+                <SelectTrigger className="bg-white/5 border-white/10 text-foreground text-sm sm:text-base h-10 sm:h-11">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -170,7 +170,7 @@ export function VideoGenerator() {
           <Button
             onClick={handleGenerate}
             disabled={isGenerating || !prompt.trim()}
-            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-full h-11 font-medium shadow-lg shadow-primary/20"
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-full h-11 sm:h-12 md:h-14 text-sm sm:text-base font-medium shadow-lg shadow-primary/20"
           >
             {isGenerating ? (
               <>
@@ -231,8 +231,8 @@ export function VideoGenerator() {
         </div>
 
         {/* Footer Notice */}
-        <div className="px-5 py-3 border-t border-white/10 bg-white/[0.02]">
-          <p className="text-muted-foreground/60 text-xs text-center">
+        <div className="px-5 py-3 sm:px-6 sm:py-4 md:px-8 border-t border-white/10 bg-white/[0.02]">
+          <p className="text-muted-foreground/60 text-xs sm:text-sm text-center">
             This is a fast demo experience. Connect your own AI provider key to generate real videos.
           </p>
         </div>
