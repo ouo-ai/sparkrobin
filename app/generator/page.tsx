@@ -120,8 +120,8 @@ export default function GeneratorPage() {
       <div className="mx-auto my-6 w-full max-w-[1320px] overflow-hidden rounded-2xl border border-white/[0.06]">
         <Header />
         <main className="px-5 pb-16 pt-10 md:px-8 md:pb-24 md:pt-16">
-          <section className="grid items-start gap-8 lg:grid-cols-[minmax(0,0.86fr)_minmax(0,1.14fr)] lg:gap-10">
-            <div className="flex flex-col items-start pt-4">
+          <section className="mx-auto flex max-w-5xl flex-col items-center gap-8 text-center md:gap-10">
+            <div className="flex w-full max-w-3xl flex-col items-center pt-4">
               <Badge className="mb-5 border-white/10 bg-white/[0.06] text-foreground hover:bg-white/[0.06]">
                 Online Generator
               </Badge>
@@ -132,7 +132,7 @@ export default function GeneratorPage() {
                 Use the Spark Robin AI video generator to create short text-to-video and image-to-video clips online.
                 Write a prompt, choose a visual style, pick a format, and generate with no registration.
               </p>
-              <div className="mt-8 grid w-full gap-3 text-sm text-foreground/85 sm:grid-cols-2">
+              <div className="mt-8 grid w-full max-w-2xl gap-3 text-sm text-foreground/85 sm:grid-cols-2">
                 {["Text-to-video prompts", "Image idea workflows", "5s and 10s clips", "16:9, 9:16, and 1:1"].map((item) => (
                   <div key={item} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
                     <Check className="h-4 w-4 text-primary" />
@@ -141,7 +141,7 @@ export default function GeneratorPage() {
                 ))}
               </div>
             </div>
-            <div className="w-full">
+            <div className="w-full max-w-4xl">
               <VideoGenerator />
             </div>
           </section>
