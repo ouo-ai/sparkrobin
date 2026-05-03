@@ -13,6 +13,8 @@ interface GenerateRequest {
   style?: string
   aspectRatio?: string
   duration?: number
+  generationMode?: "text-to-video" | "image-to-video"
+  imageUrls?: string[]
 }
 
 interface GenerateResponse {
@@ -27,6 +29,8 @@ interface GenerateResponse {
   previewTitle: string
   frames: number
   progress?: number
+  generationMode: "text-to-video" | "image-to-video"
+  imageUrls?: string[]
   message: string
   previewMode: boolean
 }
@@ -50,6 +54,8 @@ function getPreviewResponse(params: {
   style: string
   duration: 5 | 10
   aspectRatio: "16:9" | "9:16" | "1:1"
+  generationMode: "text-to-video" | "image-to-video"
+  imageUrls?: string[]
 }): GenerateResponse {
   const promptHash = hashString(params.prompt.toLowerCase())
   const id = `preview_${promptHash.toString(36)}_${Date.now().toString(36)}`
@@ -64,9 +70,25 @@ function getPreviewResponse(params: {
     estimatedSeconds: Math.ceil(params.duration * 2.5),
     previewTitle: getPreviewTitle(params.prompt),
     frames: params.duration * 24,
-    message: "Preview mode is active. Submit a prompt to explore the workflow.",
+    generationMode: params.generationMode,
+    imageUrls: params.imageUrls,
+    message: `${params.generationMode === "image-to-video" ? "Image to Video" : "Text To Video"} request is ready for preview.`,
     previewMode: true,
   }
+}
+
+function normalizeGenerationMode(value: unknown): "text-to-video" | "image-to-video" {
+  return value === "image-to-video" ? "image-to-video" : "text-to-video"
+}
+
+function normalizeImageUrls(value: unknown): string[] {
+  if (!Array.isArray(value)) {
+    return []
+  }
+
+  return value
+    .filter((url): url is string => typeof url === "string" && /^https?:\/\//.test(url))
+    .slice(0, 2)
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<GenerateResponse | { error: string }>> {
@@ -77,6 +99,8 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
     const style = normalizeStyle(body.style)
     const duration = normalizeVideoDuration(body.duration)
     const aspectRatio = normalizeVideoAspectRatio(body.aspectRatio)
+    const generationMode = normalizeGenerationMode(body.generationMode)
+    const imageUrls = normalizeImageUrls(body.imageUrls)
 
     if (!prompt) {
       return NextResponse.json(
@@ -99,11 +123,24 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       )
     }
 
-    if (!getApimartConfig()) {
-      return NextResponse.json(getPreviewResponse({ prompt, style, duration, aspectRatio }))
+    if (generationMode === "image-to-video" && imageUrls.length === 0) {
+      return NextResponse.json(
+        { error: "Upload an image before starting Image to Video" },
+        { status: 400 },
+      )
     }
 
-    const task = await submitApimartVideoTask({ prompt, style, duration, aspectRatio })
+    if (!getApimartConfig()) {
+      return NextResponse.json(getPreviewResponse({ prompt, style, duration, aspectRatio, generationMode, imageUrls }))
+    }
+
+    const task = await submitApimartVideoTask({
+      prompt,
+      style,
+      duration,
+      aspectRatio,
+      imageUrls: generationMode === "image-to-video" ? imageUrls : undefined,
+    })
 
     return NextResponse.json({
       id: task.taskId,
@@ -117,7 +154,9 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       previewTitle: getPreviewTitle(prompt),
       frames: duration * 24,
       progress: 0,
-      message: "Video generation started. Status will update automatically.",
+      generationMode,
+      imageUrls: generationMode === "image-to-video" ? imageUrls : undefined,
+      message: `${generationMode === "image-to-video" ? "Image to Video" : "Text To Video"} generation started. Status will update automatically.`,
       previewMode: false,
     })
   } catch (error) {
@@ -135,7 +174,7 @@ export async function GET(): Promise<NextResponse<{ message: string; endpoints: 
   return NextResponse.json({
     message: "Spark Robin AI Video Generator API",
     endpoints: {
-      POST: "Submit a video generation task, or return preview mode when generation is unavailable.",
+      POST: "Submit a Text To Video or Image to Video generation task.",
     },
   })
 }

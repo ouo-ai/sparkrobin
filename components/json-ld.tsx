@@ -4,7 +4,7 @@ export function JsonLd() {
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "Spark Robin",
-    description: "Spark Robin is an AI video generator for turning text prompts and image ideas into short video concepts with live generation status.",
+    description: "Spark Robin is an AI video generator for Text To Video and Image to Video creation with live generation status.",
     url: siteUrl,
     image: `${siteUrl}/brand/og-image.png`,
     applicationCategory: "MultimediaApplication",
@@ -16,7 +16,7 @@ export function JsonLd() {
       description: "Free no-registration workflow available",
     },
     featureList: [
-      "Text to Video Generation",
+      "Text To Video Generation",
       "Image to Video Generation",
       "Multiple Video Styles",
       "Custom Aspect Ratios",
@@ -40,7 +40,15 @@ export function JsonLd() {
         name: "What is Spark Robin?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Spark Robin is an AI video generator that transforms your text prompts and images into stunning, fluid videos. It uses advanced AI models to create cinematic, anime, realistic, and artistic video content.",
+          text: "Spark Robin is an AI video generator for Text To Video and Image to Video creation. You can write a prompt or upload a reference image, then choose style, format, and duration.",
+        },
+      },
+      {
+        "@type": "Question",
+        name: "Can I use Spark Robin for Image to Video?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "Yes. Switch to Image to Video, upload a reference image, describe the motion, and generate a short video from that image.",
         },
       },
       {
@@ -48,7 +56,7 @@ export function JsonLd() {
         name: "Do I need to register to try Spark Robin?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "No registration is required. You can immediately enter a prompt, choose a format, and track generation status directly in the page.",
+          text: "No registration is required. You can immediately choose Text To Video or Image to Video, enter a prompt, choose a format, and track generation status directly in the page.",
         },
       },
       {

@@ -50,7 +50,7 @@ const features: BentoCardProps[] = [
   },
   {
     title: "Smart AI Generation",
-    description: "Advanced AI understands your prompts and creates fluid, coherent video sequences with natural motion.",
+    description: "Create Text To Video clips from prompts or Image to Video clips from uploaded reference images.",
     iconSrc: "/brand/card-icons/smart-generation.png",
   },
   {

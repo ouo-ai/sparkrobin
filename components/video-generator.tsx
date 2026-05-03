@@ -1,12 +1,15 @@
 "use client"
 
+import type { ChangeEvent } from "react"
 import { useEffect, useState } from "react"
+import NextImage from "next/image"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Sparkles, Play, Image as ImageIcon, Film, Clock, Ratio, Palette, Info } from "lucide-react"
+import { Sparkles, Play, Image as ImageIcon, Film, Clock, Ratio, Palette, Info, Upload, X } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 
+type VideoGenerationMode = "text-to-video" | "image-to-video"
 type GenerateStatus = "preview" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
 
 interface GenerateResponse {
@@ -21,6 +24,8 @@ interface GenerateResponse {
   previewTitle: string
   frames: number
   progress?: number
+  generationMode: VideoGenerationMode
+  imageUrls?: string[]
   videoUrl?: string
   thumbnailUrl?: string
   errorMessage?: string
@@ -44,11 +49,31 @@ interface TaskStatusErrorResponse {
 }
 
 const ACTIVE_TASK_STATUSES: GenerateStatus[] = ["submitted", "pending", "processing"]
-const promptSuggestions = [
-  "A majestic eagle soaring through golden sunset clouds over mountain peaks...",
-  "A futuristic city street glowing with neon reflections after rain...",
-  "Cherry blossom petals drifting in slow motion across a quiet garden...",
+const MAX_REFERENCE_IMAGE_BYTES = 20 * 1024 * 1024
+const generationModes: Array<{ id: VideoGenerationMode; label: string; description: string }> = [
+  {
+    id: "text-to-video",
+    label: "Text To Video",
+    description: "Create from a prompt",
+  },
+  {
+    id: "image-to-video",
+    label: "Image to Video",
+    description: "Animate a reference image",
+  },
 ]
+const promptSuggestions: Record<VideoGenerationMode, string[]> = {
+  "text-to-video": [
+    "A majestic eagle soaring through golden sunset clouds over mountain peaks...",
+    "A futuristic city street glowing with neon reflections after rain...",
+    "Cherry blossom petals drifting in slow motion across a quiet garden...",
+  ],
+  "image-to-video": [
+    "Animate this image with slow cinematic camera movement and natural lighting...",
+    "Turn the subject toward the camera with subtle motion and soft background depth...",
+    "Add gentle environmental motion while preserving the main subject...",
+  ],
+}
 
 function getPreviewAspectClass(aspectRatio: string): string {
   if (aspectRatio === "9:16") {
@@ -91,7 +116,10 @@ function getNoticeClasses(result: GenerateResponse): string {
 }
 
 export function VideoGenerator() {
+  const [generationMode, setGenerationMode] = useState<VideoGenerationMode>("text-to-video")
   const [prompt, setPrompt] = useState("")
+  const [referenceImage, setReferenceImage] = useState<File | null>(null)
+  const [referencePreviewUrl, setReferencePreviewUrl] = useState<string | null>(null)
   const [style, setStyle] = useState("cinematic")
   const [aspectRatio, setAspectRatio] = useState("16:9")
   const [duration, setDuration] = useState("5")
@@ -100,6 +128,25 @@ export function VideoGenerator() {
   const [error, setError] = useState<string | null>(null)
   const [promptHintIndex, setPromptHintIndex] = useState(0)
   const taskIsActive = Boolean(result?.taskId && !result.previewMode && ACTIVE_TASK_STATUSES.includes(result.status))
+  const activePromptSuggestions = promptSuggestions[generationMode]
+  const activeMode = generationModes.find((mode) => mode.id === generationMode) || generationModes[0]
+  const canGenerate = Boolean(prompt.trim()) && (generationMode === "text-to-video" || Boolean(referenceImage))
+
+  useEffect(() => {
+    if (!referenceImage) {
+      setReferencePreviewUrl(null)
+      return
+    }
+
+    const previewUrl = URL.createObjectURL(referenceImage)
+    setReferencePreviewUrl(previewUrl)
+
+    return () => URL.revokeObjectURL(previewUrl)
+  }, [referenceImage])
+
+  useEffect(() => {
+    setPromptHintIndex(0)
+  }, [generationMode])
 
   useEffect(() => {
     if (prompt) {
@@ -107,11 +154,11 @@ export function VideoGenerator() {
     }
 
     const intervalId = setInterval(() => {
-      setPromptHintIndex((current) => (current + 1) % promptSuggestions.length)
+      setPromptHintIndex((current) => (current + 1) % promptSuggestions[generationMode].length)
     }, 3200)
 
     return () => clearInterval(intervalId)
-  }, [prompt])
+  }, [generationMode, prompt])
 
   useEffect(() => {
     if (!result?.taskId || result.previewMode || !ACTIVE_TASK_STATUSES.includes(result.status)) {
@@ -186,19 +233,45 @@ export function VideoGenerator() {
       return
     }
 
+    if (generationMode === "image-to-video" && !referenceImage) {
+      setError("Please upload an image for Image to Video")
+      return
+    }
+
     setIsGenerating(true)
     setError(null)
     setResult(null)
 
     try {
+      let imageUrls: string[] | undefined
+
+      if (generationMode === "image-to-video" && referenceImage) {
+        const formData = new FormData()
+        formData.append("file", referenceImage)
+
+        const uploadResponse = await fetch("/api/uploads/images", {
+          method: "POST",
+          body: formData,
+        })
+        const uploadData = await uploadResponse.json()
+
+        if (!uploadResponse.ok || typeof uploadData.url !== "string") {
+          throw new Error(uploadData.error || "Failed to upload image")
+        }
+
+        imageUrls = [uploadData.url]
+      }
+
       const response = await fetch("/api/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          generationMode,
           prompt: prompt.trim(),
           style,
           aspectRatio,
           duration: parseInt(duration),
+          imageUrls,
         }),
       })
 
@@ -217,6 +290,35 @@ export function VideoGenerator() {
     }
   }
 
+  const handleReferenceImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+
+    if (!file) {
+      return
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setError("Upload an image file for Image to Video")
+      event.target.value = ""
+      return
+    }
+
+    if (file.size > MAX_REFERENCE_IMAGE_BYTES) {
+      setError("Image must be 20MB or smaller")
+      event.target.value = ""
+      return
+    }
+
+    setReferenceImage(file)
+    setError(null)
+  }
+
+  const handleGenerationModeChange = (mode: VideoGenerationMode) => {
+    setGenerationMode(mode)
+    setError(null)
+    setResult(null)
+  }
+
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="rounded-2xl border border-white/20 overflow-hidden" style={{
@@ -229,18 +331,91 @@ export function VideoGenerator() {
             <Film className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
           </div>
           <div>
-            <h3 className="text-foreground text-sm sm:text-base font-medium">AI Video Generator</h3>
+            <h3 className="text-foreground text-sm sm:text-base font-medium">{activeMode.label}</h3>
             <p className="text-muted-foreground text-xs sm:text-sm">No registration required</p>
           </div>
         </div>
 
         {/* Input Section */}
         <div className="p-5 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
+          <div className="grid grid-cols-1 gap-2 rounded-2xl border border-white/10 bg-white/[0.035] p-1.5 sm:grid-cols-2">
+            {generationModes.map((mode) => (
+              <button
+                key={mode.id}
+                type="button"
+                onClick={() => handleGenerationModeChange(mode.id)}
+                className={`rounded-xl px-4 py-3 text-left transition-colors ${
+                  generationMode === mode.id
+                    ? "bg-primary text-primary-foreground"
+                    : "text-muted-foreground hover:bg-white/[0.05] hover:text-foreground"
+                }`}
+              >
+                <span className="block text-sm font-semibold sm:text-base">{mode.label}</span>
+                <span className="mt-0.5 block text-xs opacity-75">{mode.description}</span>
+              </button>
+            ))}
+          </div>
+
+          {generationMode === "image-to-video" && (
+            <div className="space-y-2 sm:space-y-3">
+              <label htmlFor="reference-image" className="text-foreground text-sm sm:text-base font-medium flex items-center gap-2">
+                <ImageIcon className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+                Reference image
+              </label>
+              <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-stretch">
+                <label
+                  htmlFor="reference-image"
+                  className="relative flex min-h-[118px] cursor-pointer items-center justify-center overflow-hidden rounded-xl border border-dashed border-white/15 bg-white/[0.04] p-4 transition-colors hover:border-primary/45 hover:bg-white/[0.06]"
+                >
+                  {referencePreviewUrl ? (
+                    <NextImage
+                      src={referencePreviewUrl}
+                      alt=""
+                      fill
+                      unoptimized
+                      className="object-cover"
+                      aria-hidden="true"
+                    />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
+                      <Upload className="h-6 w-6 text-primary" />
+                      <span className="text-sm font-medium text-foreground">Upload image for Image to Video</span>
+                      <span className="text-xs">JPG, PNG, WebP, or GIF up to 20MB</span>
+                    </div>
+                  )}
+                </label>
+                <input
+                  id="reference-image"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  className="sr-only"
+                  onChange={handleReferenceImageChange}
+                />
+                {referenceImage && (
+                  <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-xs text-muted-foreground sm:w-48 sm:flex-col sm:items-start sm:justify-center">
+                    <span className="min-w-0 truncate">{referenceImage.name}</span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setReferenceImage(null)
+                        setResult(null)
+                      }}
+                      className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-foreground/80 transition-colors hover:bg-white/10 hover:text-foreground"
+                    >
+                      <X className="h-3.5 w-3.5" />
+                      Remove
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Prompt Input */}
           <div className="space-y-2 sm:space-y-3">
             <label htmlFor="video-prompt" className="text-foreground text-sm sm:text-base font-medium flex items-center gap-2">
               <Sparkles className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-              Describe your video
+              {generationMode === "image-to-video" ? "Describe image motion" : "Describe your video"}
             </label>
             <div className="relative">
               <Textarea
@@ -253,13 +428,13 @@ export function VideoGenerator() {
               {!prompt && (
                 <div className="pointer-events-none absolute left-3 right-3 top-3 overflow-hidden text-left text-sm leading-6 text-zinc-300/55 sm:left-4 sm:right-4 sm:top-3 sm:text-base">
                   <span key={promptHintIndex} className="block animate-prompt-hint">
-                    {promptSuggestions[promptHintIndex]}
+                    {activePromptSuggestions[promptHintIndex]}
                   </span>
                 </div>
               )}
             </div>
             <div className="flex justify-between gap-3 text-xs sm:text-sm text-muted-foreground/70">
-              <span>Be descriptive for better results</span>
+              <span>{generationMode === "image-to-video" ? "Describe how the image should move" : "Be descriptive for better results"}</span>
               <span>{prompt.length}/2500</span>
             </div>
           </div>
@@ -325,18 +500,18 @@ export function VideoGenerator() {
           {/* Generate Button */}
           <Button
             onClick={handleGenerate}
-            disabled={isGenerating || taskIsActive || !prompt.trim()}
+            disabled={isGenerating || taskIsActive || !canGenerate}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-full h-11 sm:h-12 md:h-14 text-sm sm:text-base font-medium shadow-lg shadow-primary/20"
           >
             {isGenerating || taskIsActive ? (
               <>
                 <Spinner className="w-4 h-4 mr-2" />
-                {taskIsActive ? "Generating video..." : "Starting generation..."}
+                {taskIsActive ? "Generating video..." : generationMode === "image-to-video" ? "Preparing image..." : "Starting generation..."}
               </>
             ) : (
               <>
                 <Play className="w-4 h-4 mr-2" />
-                Generate Video
+                {generationMode === "image-to-video" ? "Generate Image to Video" : "Generate Text To Video"}
               </>
             )}
           </Button>
@@ -358,7 +533,7 @@ export function VideoGenerator() {
                 <div className="flex-1 min-w-0">
                   <h4 className="text-foreground text-sm font-medium truncate">{result.previewTitle}</h4>
                   <p className="text-muted-foreground text-xs mt-0.5">
-                    {result.style} • {result.aspectRatio} • {result.duration}s • {result.frames} frames
+                    {result.generationMode === "image-to-video" ? "Image to Video" : "Text To Video"} • {result.style} • {result.aspectRatio} • {result.duration}s
                   </p>
                 </div>
               </div>
@@ -432,7 +607,7 @@ export function VideoGenerator() {
         {/* Footer Notice */}
         <div className="px-5 py-3 sm:px-6 sm:py-4 md:px-8 border-t border-white/10 bg-white/[0.02]">
           <p className="text-muted-foreground/60 text-xs sm:text-sm text-center">
-            Describe a scene, choose a format, and generate your video directly in Spark Robin.
+            Choose Text To Video or Image to Video, set the format, and generate directly in Spark Robin.
           </p>
         </div>
       </div>

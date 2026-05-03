@@ -13,7 +13,7 @@ export function FooterSection() {
           <Image src="/brand/logo-mark-64.png" alt="" width={24} height={24} className="rounded-lg" />
           <div className="text-center text-foreground text-xl font-semibold leading-4">Spark Robin</div>
         </div>
-        <p className="text-foreground/90 text-sm font-medium leading-[18px] text-left">AI Video Generator</p>
+        <p className="text-foreground/90 text-sm font-medium leading-[18px] text-left">Text To Video & Image to Video</p>
         <div className="flex justify-start items-start gap-3">
           <a href="#" aria-label="Twitter" className="w-4 h-4 flex items-center justify-center">
             <Twitter className="w-full h-full text-muted-foreground hover:text-foreground transition-colors" />
@@ -38,7 +38,10 @@ export function FooterSection() {
               Pricing
             </Link>
             <Link href="/generator" className="text-foreground text-sm font-normal leading-5 hover:underline">
-              Video Generator
+              Text To Video
+            </Link>
+            <Link href="/generator" className="text-foreground text-sm font-normal leading-5 hover:underline">
+              Image to Video
             </Link>
             <Link href="/#faq-section" className="text-foreground text-sm font-normal leading-5 hover:underline">
               FAQ

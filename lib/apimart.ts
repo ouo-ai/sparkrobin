@@ -29,6 +29,16 @@ interface ApimartGenerationData {
   status?: string
 }
 
+interface ApimartImageUploadResponse {
+  url?: string
+  filename?: string
+  content_type?: string
+  bytes?: number
+  created_at?: number
+  error?: unknown
+  message?: unknown
+}
+
 interface ApimartGenerationResponse {
   code?: number
   data?: ApimartGenerationData[] | ApimartGenerationData
@@ -63,6 +73,13 @@ export interface ApimartVideoTaskStatus {
   thumbnailUrl?: string
   estimatedSeconds?: number
   errorMessage?: string
+}
+
+export interface ApimartImageUpload {
+  url: string
+  filename?: string
+  contentType?: string
+  bytes?: number
 }
 
 export class ApimartRequestError extends Error {
@@ -110,11 +127,44 @@ export function formatVideoPrompt(prompt: string, style: string): string {
   return `${prompt.trim()}\n\nVisual style: ${stylePrompt}.`
 }
 
+export async function uploadApimartImage(file: File): Promise<ApimartImageUpload> {
+  const config = getApimartConfig()
+
+  if (!config) {
+    throw new ApimartRequestError("Image upload is temporarily unavailable.", 503)
+  }
+
+  const formData = new FormData()
+  formData.append("file", file, file.name || "reference-image.png")
+
+  const response = await fetch(`${config.baseUrl}/v1/uploads/images`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${config.apiKey}`,
+    },
+    body: formData,
+  })
+
+  const data = await readJson<ApimartImageUploadResponse>(response)
+
+  if (!response.ok || !data.url) {
+    throw toApimartError(response.status)
+  }
+
+  return {
+    url: data.url,
+    filename: data.filename,
+    contentType: data.content_type,
+    bytes: data.bytes,
+  }
+}
+
 export async function submitApimartVideoTask(params: {
   prompt: string
   style: string
   duration: 5 | 10
   aspectRatio: "16:9" | "9:16" | "1:1"
+  imageUrls?: string[]
 }): Promise<ApimartVideoTaskSubmission> {
   const config = getApimartConfig()
 
@@ -128,6 +178,7 @@ export async function submitApimartVideoTask(params: {
     mode: config.mode,
     duration: params.duration,
     aspect_ratio: params.aspectRatio,
+    ...(params.imageUrls?.length ? { image_urls: params.imageUrls.slice(0, 2) } : {}),
   }
 
   const response = await fetch(`${config.baseUrl}/v1/videos/generations`, {

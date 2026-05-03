@@ -7,9 +7,9 @@ const _geist = Geist({ subsets: ["latin"] });
 const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: 'Spark Robin AI Video Generator | Text to Video',
-  description: 'Spark Robin is an AI video generator for turning text and image ideas into short video concepts with a no-registration workflow.',
-  keywords: ['Spark Robin', 'sparkrobin', 'spark robin ai', 'Spark Robin AI video generator', 'AI video generator', 'text to video generator', 'image to video generator'],
+  title: 'Spark Robin AI Video Generator | Text To Video & Image to Video',
+  description: 'Spark Robin is an AI video generator for Text To Video and Image to Video creation with a no-registration workflow.',
+  keywords: ['Spark Robin', 'sparkrobin', 'spark robin ai', 'Spark Robin AI video generator', 'Text To Video', 'Image to Video', 'AI video generator', 'text to video generator', 'image to video generator'],
   authors: [{ name: 'Spark Robin' }],
   creator: 'Spark Robin',
   publisher: 'Spark Robin',
@@ -22,8 +22,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: '/',
     siteName: 'Spark Robin',
-    title: 'Spark Robin AI Video Generator | Text to Video',
-    description: 'Use Spark Robin to preview a no-registration AI video generator workflow for text-to-video and image-to-video ideas.',
+    title: 'Spark Robin AI Video Generator | Text To Video & Image to Video',
+    description: 'Use Spark Robin for Text To Video and Image to Video generation with no registration.',
     images: [
       {
         url: '/brand/og-image.png',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Spark Robin AI Video Generator',
-    description: 'Generate text-to-video and image-to-video concepts in the Spark Robin no-registration workflow.',
+    description: 'Generate Text To Video and Image to Video clips in the Spark Robin no-registration workflow.',
     images: ['/brand/og-image.png'],
     creator: '@sparkrobin',
   },

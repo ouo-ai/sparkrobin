@@ -107,7 +107,7 @@ export function CTASection() {
             Create videos in seconds
           </h2>
           <p className="text-muted-foreground text-sm md:text-base font-medium leading-[18.20px] md:leading-relaxed break-words max-w-2xl">
-            Transform your ideas into stunning AI-generated videos. Start now with no registration and no commitment.
+            Start with Text To Video or upload an image for Image to Video. No registration and no commitment.
           </p>
         </div>
         <Link href="/generator">

@@ -3,8 +3,8 @@ import { PenLine, Sliders, Wand2, Download } from "lucide-react"
 const steps = [
   {
     icon: PenLine,
-    title: "Describe Your Vision",
-    description: "Enter a text prompt describing the video you want to create, or upload a reference image.",
+    title: "Choose Text To Video or Image to Video",
+    description: "Start from a written prompt, or upload a reference image and describe how it should move.",
   },
   {
     icon: Sliders,
@@ -14,7 +14,7 @@ const steps = [
   {
     icon: Wand2,
     title: "AI Generation",
-    description: "Our AI transforms your prompt into fluid video frames with motion, lighting, and detail.",
+    description: "Spark Robin turns your prompt or image into fluid video frames with motion, lighting, and detail.",
   },
   {
     icon: Download,
@@ -31,7 +31,7 @@ export function WorkflowSection() {
           How Spark Robin Works
         </h2>
         <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto">
-          Create stunning AI videos in four simple steps. No technical expertise required.
+          Create Text To Video and Image to Video clips in four simple steps. No technical expertise required.
         </p>
       </div>
 

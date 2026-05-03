@@ -7,11 +7,15 @@ import { VideoGenerator } from "@/components/video-generator"
 import { Badge } from "@/components/ui/badge"
 
 export const metadata: Metadata = {
-  title: "Spark Robin AI Video Generator | Create Videos Online",
+  title: "Spark Robin Text To Video & Image to Video Generator",
   description:
-    "Use the Spark Robin AI video generator to create text-to-video and image-to-video clips online with no registration. Choose styles, formats, and short video durations.",
+    "Use Spark Robin for Text To Video and Image to Video generation online with no registration. Upload an image or write a prompt, then choose styles and formats.",
   keywords: [
     "Spark Robin AI video generator",
+    "Spark Robin Text To Video",
+    "Spark Robin Image to Video",
+    "Text To Video",
+    "Image to Video",
     "AI video generator",
     "text to video generator",
     "image to video generator",
@@ -22,9 +26,9 @@ export const metadata: Metadata = {
     canonical: "/generator",
   },
   openGraph: {
-    title: "Spark Robin AI Video Generator | Create Videos Online",
+    title: "Spark Robin Text To Video & Image to Video Generator",
     description:
-      "Create short AI videos from prompts with Spark Robin. Choose style, aspect ratio, and duration in a no-registration generator.",
+      "Create short AI videos from text prompts or reference images with Spark Robin.",
     url: "/generator",
     siteName: "Spark Robin",
     images: [
@@ -38,9 +42,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Spark Robin AI Video Generator",
+    title: "Spark Robin Text To Video & Image to Video",
     description:
-      "Generate short text-to-video and image-to-video clips online with Spark Robin.",
+      "Generate Text To Video and Image to Video clips online with Spark Robin.",
     images: ["/brand/og-image.png"],
   },
 }
@@ -50,8 +54,8 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://sparkrobin.ai"
 const steps = [
   {
     icon: Lightbulb,
-    title: "Describe the scene",
-    description: "Write the subject, environment, mood, motion, and key visual details in one focused prompt.",
+    title: "Pick a creation mode",
+    description: "Choose Text To Video for a written prompt or Image to Video to animate a reference image.",
   },
   {
     icon: Wand2,
@@ -94,7 +98,7 @@ const faqs = [
   {
     question: "What is the Spark Robin AI video generator?",
     answer:
-      "The Spark Robin AI video generator is an online tool for turning text and image ideas into short AI-generated videos. Enter a scene, choose a style and format, then start generation from the browser.",
+      "The Spark Robin AI video generator is an online tool for Text To Video and Image to Video creation. Enter a scene or upload a reference image, choose a style and format, then start generation from the browser.",
   },
   {
     question: "Can I use Spark Robin as a text to video generator?",
@@ -102,14 +106,14 @@ const faqs = [
       "Yes. You can describe the subject, motion, camera direction, mood, and environment in text, then generate a short video from that prompt.",
   },
   {
+    question: "Can I use Spark Robin for Image to Video?",
+    answer:
+      "Yes. Switch to Image to Video, upload a reference image, describe the motion you want, and Spark Robin generates a short video from that image.",
+  },
+  {
     question: "Do I need to register before generating a video?",
     answer:
       "No registration is required to start from the generator page. You can enter a prompt, choose settings, and track video generation in the page.",
-  },
-  {
-    question: "Which video formats and styles are supported?",
-    answer:
-      "Spark Robin supports 16:9, 9:16, and 1:1 formats with Cinematic, Anime, Realistic, Artistic, and Minimalist styles.",
   },
 ]
 
@@ -126,14 +130,14 @@ export default function GeneratorPage() {
                 Online Generator
               </Badge>
               <h1 className="max-w-2xl text-4xl font-semibold leading-tight md:text-6xl">
-                Spark Robin AI Video Generator
+                Spark Robin Text To Video & Image to Video
               </h1>
               <p className="mt-5 max-w-2xl text-base font-medium leading-relaxed text-muted-foreground md:text-lg">
-                Use the Spark Robin AI video generator to create short text-to-video and image-to-video clips online.
-                Write a prompt, choose a visual style, pick a format, and generate with no registration.
+                Use Spark Robin to create short videos from text prompts or reference images.
+                Choose Text To Video or Image to Video, set the style and format, then generate with no registration.
               </p>
               <div className="mt-8 grid w-full max-w-2xl gap-3 text-sm text-foreground/85 sm:grid-cols-2">
-                {["Text-to-video prompts", "Image idea workflows", "5s and 10s clips", "16:9, 9:16, and 1:1"].map((item) => (
+                {["Text To Video prompts", "Image to Video upload", "5s and 10s clips", "16:9, 9:16, and 1:1"].map((item) => (
                   <div key={item} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
                     <Check className="h-4 w-4 text-primary" />
                     <span>{item}</span>
@@ -150,7 +154,7 @@ export default function GeneratorPage() {
             <div className="mx-auto max-w-3xl text-center">
               <h2 className="text-3xl font-semibold md:text-4xl">How Spark Robin works</h2>
               <p className="mt-4 text-sm leading-6 text-muted-foreground md:text-base">
-                The generator keeps the workflow simple while giving creators control over prompt detail, style, aspect ratio, and duration.
+                The generator keeps Text To Video and Image to Video workflows simple while giving creators control over prompt detail, style, aspect ratio, and duration.
               </p>
             </div>
             <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-4">
@@ -167,7 +171,7 @@ export default function GeneratorPage() {
           <section className="mt-16 grid grid-cols-1 gap-4 md:mt-20 lg:grid-cols-[0.9fr_1.1fr]">
             <article className="rounded-lg border border-white/10 bg-white/[0.04] p-6 md:p-8">
               <Sparkles className="h-6 w-6 text-primary" />
-              <h2 className="mt-5 text-3xl font-semibold">Prompt tips for better AI video results</h2>
+              <h2 className="mt-5 text-3xl font-semibold">Prompt tips for Text To Video and Image to Video</h2>
               <p className="mt-4 text-sm leading-6 text-muted-foreground md:text-base">
                 Strong prompts give the generator a clear visual target. Focus on one scene, describe what should move,
                 and include the mood or lighting that matters most.
@@ -232,7 +236,7 @@ function GeneratorJsonLd() {
     "@type": "WebApplication",
     name: "Spark Robin AI Video Generator",
     description:
-      "Spark Robin AI video generator creates short text-to-video and image-to-video clips online with style, format, and duration controls.",
+      "Spark Robin AI video generator creates short Text To Video and Image to Video clips online with style, format, and duration controls.",
     url: `${siteUrl}/generator`,
     image: `${siteUrl}/brand/og-image.png`,
     applicationCategory: "MultimediaApplication",

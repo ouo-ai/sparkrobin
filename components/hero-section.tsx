@@ -287,10 +287,10 @@ export function HeroSection() {
 
       <div className="relative z-10 space-y-4 md:space-y-5 lg:space-y-6 mb-6 md:mb-7 lg:mb-8 max-w-md md:max-w-[600px] lg:max-w-[700px] mt-16 md:mt-[100px] lg:mt-[120px] px-4">
         <h1 className="text-foreground text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight text-balance">
-          Spark Robin: AI Video Generator
+          Spark Robin: Text To Video & Image to Video
         </h1>
         <p className="text-muted-foreground text-base md:text-base lg:text-lg font-medium leading-relaxed max-w-lg mx-auto text-balance">
-          Transform text and images into stunning AI-generated videos. Try instantly below - no registration required.
+          Create videos from a written prompt or animate a reference image. Try Text To Video and Image to Video below - no registration required.
         </p>
       </div>
 
