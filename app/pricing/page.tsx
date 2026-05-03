@@ -44,7 +44,7 @@ const plans = [
     cadence: "forever",
     summary: "For quick ideas, prompt testing, and first videos.",
     cta: "Start Generating",
-    href: "/#generator",
+    href: "/generator",
     featured: false,
     features: [
       "No registration required",
@@ -60,7 +60,7 @@ const plans = [
     cadence: "per month",
     summary: "For creators publishing videos every week.",
     cta: "Choose Creator",
-    href: "/#generator",
+    href: "/generator",
     featured: true,
     features: [
       "120 monthly video credits",
@@ -76,7 +76,7 @@ const plans = [
     cadence: "per month",
     summary: "For teams producing campaign and product video assets.",
     cta: "Choose Studio",
-    href: "/#generator",
+    href: "/generator",
     featured: false,
     features: [
       "420 monthly video credits",
@@ -214,7 +214,7 @@ export default function PricingPage() {
                   </p>
                 </div>
                 <Button asChild variant="secondary" className="rounded-full">
-                  <Link href="/#generator">Start Generating</Link>
+                  <Link href="/generator">Start Generating</Link>
                 </Button>
               </div>
               <div className="mt-8 grid gap-5">

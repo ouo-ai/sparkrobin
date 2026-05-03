@@ -37,7 +37,7 @@ export function FooterSection() {
             <Link href="/pricing" className="text-foreground text-sm font-normal leading-5 hover:underline">
               Pricing
             </Link>
-            <Link href="/#generator" className="text-foreground text-sm font-normal leading-5 hover:underline">
+            <Link href="/generator" className="text-foreground text-sm font-normal leading-5 hover:underline">
               Video Generator
             </Link>
             <Link href="/#faq-section" className="text-foreground text-sm font-normal leading-5 hover:underline">

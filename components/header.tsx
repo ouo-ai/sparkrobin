@@ -12,6 +12,7 @@ import { usePathname } from "next/navigation"
 export function Header() {
   const pathname = usePathname()
   const navItems = [
+    { name: "Generator", href: "/generator" },
     { name: "Features", href: "/#features-section", targetId: "features-section" },
     { name: "Use Cases", href: "/#use-cases-section", targetId: "use-cases-section" },
     { name: "Pricing", href: "/pricing" },
@@ -54,7 +55,7 @@ export function Header() {
           </nav>
         </div>
         <div className="flex items-center gap-4">
-          <Link href="/#generator" onClick={(e) => handleNavClick(e, "generator")} className="hidden md:block">
+          <Link href="/generator" className="hidden md:block">
             <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-2 rounded-full font-medium shadow-sm">
               Try Now
             </Button>
@@ -81,7 +82,7 @@ export function Header() {
                     {item.name}
                   </Link>
                 ))}
-                <Link href="/#generator" onClick={(e) => handleNavClick(e, "generator")} className="w-full mt-4">
+                <Link href="/generator" className="w-full mt-4">
                   <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-2 rounded-full font-medium shadow-sm">
                     Try Now
                   </Button>
