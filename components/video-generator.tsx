@@ -50,6 +50,7 @@ interface TaskStatusErrorResponse {
 
 const ACTIVE_TASK_STATUSES: GenerateStatus[] = ["submitted", "pending", "processing"]
 const MAX_REFERENCE_IMAGE_BYTES = 20 * 1024 * 1024
+const MAX_REFERENCE_IMAGE_DIMENSION = 1280
 const generationModes: Array<{ id: VideoGenerationMode; label: string; description: string }> = [
   {
     id: "text-to-video",
@@ -113,6 +114,65 @@ function getNoticeClasses(result: GenerateResponse): string {
   }
 
   return "bg-primary/10 border-primary/20 text-primary/90"
+}
+
+function readImage(file: File): Promise<HTMLImageElement> {
+  return new Promise((resolve, reject) => {
+    const objectUrl = URL.createObjectURL(file)
+    const image = new Image()
+
+    image.onload = () => {
+      URL.revokeObjectURL(objectUrl)
+      resolve(image)
+    }
+
+    image.onerror = () => {
+      URL.revokeObjectURL(objectUrl)
+      reject(new Error("Upload a valid image file"))
+    }
+
+    image.src = objectUrl
+  })
+}
+
+function canvasToBlob(canvas: HTMLCanvasElement, type: string, quality: number): Promise<Blob> {
+  return new Promise((resolve, reject) => {
+    canvas.toBlob((blob) => {
+      if (!blob) {
+        reject(new Error("Image conversion failed"))
+        return
+      }
+
+      resolve(blob)
+    }, type, quality)
+  })
+}
+
+async function normalizeReferenceImage(file: File): Promise<File> {
+  const image = await readImage(file)
+  const scale = Math.min(1, MAX_REFERENCE_IMAGE_DIMENSION / Math.max(image.naturalWidth, image.naturalHeight))
+  const width = Math.max(1, Math.round(image.naturalWidth * scale))
+  const height = Math.max(1, Math.round(image.naturalHeight * scale))
+  const canvas = document.createElement("canvas")
+  const context = canvas.getContext("2d")
+
+  if (!context) {
+    throw new Error("Image conversion is unavailable in this browser")
+  }
+
+  canvas.width = width
+  canvas.height = height
+  context.fillStyle = "#ffffff"
+  context.fillRect(0, 0, width, height)
+  context.drawImage(image, 0, 0, width, height)
+
+  const blob = await canvasToBlob(canvas, "image/jpeg", 0.92)
+  const baseName = file.name.replace(/\.[^.]+$/, "") || "reference-image"
+
+  return new File([blob], `${baseName}.jpg`, {
+    type: "image/jpeg",
+    lastModified: Date.now(),
+  })
 }
 
 export function VideoGenerator() {
@@ -246,8 +306,9 @@ export function VideoGenerator() {
       let imageUrls: string[] | undefined
 
       if (generationMode === "image-to-video" && referenceImage) {
+        const uploadFile = await normalizeReferenceImage(referenceImage)
         const formData = new FormData()
-        formData.append("file", referenceImage)
+        formData.append("file", uploadFile)
 
         const uploadResponse = await fetch("/api/uploads/images", {
           method: "POST",
@@ -588,12 +649,12 @@ export function VideoGenerator() {
                       Open generated video
                     </a>
                   )}
-                  {!result.previewMode && result.status !== "completed" && (
+                  {!result.previewMode && ACTIVE_TASK_STATUSES.includes(result.status) && (
                     <p className="mt-1 text-muted-foreground/80">
                       Keep this tab open while Spark Robin checks the generation status.
                     </p>
                   )}
-                  {result.errorMessage && (
+                  {result.errorMessage && result.message !== result.errorMessage && (
                     <p className="mt-1">
                       {result.errorMessage}
                     </p>

@@ -230,7 +230,7 @@ export async function getApimartVideoTaskStatus(taskId: string): Promise<Apimart
 
   const result = data.data.result
   const status = normalizeTaskStatus(data.data.status, "processing")
-  const errorMessage = status === "failed" ? extractErrorMessage(data.data.error) : undefined
+  const errorMessage = status === "failed" ? normalizeProviderError(extractErrorMessage(data.data.error)) : undefined
 
   return {
     taskId: data.data.id || taskId,
@@ -332,6 +332,18 @@ function extractErrorMessage(value: unknown): string | undefined {
   }
 
   return undefined
+}
+
+function normalizeProviderError(message: string | undefined): string | undefined {
+  if (!message) {
+    return undefined
+  }
+
+  if (/base64|image pixel|file.*invalid/i.test(message)) {
+    return "The uploaded image could not be processed. Try another JPG or PNG image with a clear subject."
+  }
+
+  return message
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
