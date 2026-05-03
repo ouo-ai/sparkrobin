@@ -13,7 +13,7 @@ export function JsonLd() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "Free workflow demo available",
+      description: "Free no-registration workflow available",
     },
     featureList: [
       "Text to Video Generation",
@@ -27,7 +27,7 @@ export function JsonLd() {
     potentialAction: {
       "@type": "UseAction",
       target: `${siteUrl}/#generator`,
-      name: "Try the Spark Robin demo generator",
+      name: "Try the Spark Robin generator",
     },
   }
 

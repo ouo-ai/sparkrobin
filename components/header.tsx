@@ -48,7 +48,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           <Link href="#generator" className="hidden md:block">
             <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-2 rounded-full font-medium shadow-sm">
-              Try Demo
+              Try Now
             </Button>
           </Link>
           <Sheet>
@@ -75,7 +75,7 @@ export function Header() {
                 ))}
                 <Link href="#generator" className="w-full mt-4">
                   <Button className="bg-secondary text-secondary-foreground hover:bg-secondary/90 px-6 py-2 rounded-full font-medium shadow-sm">
-                    Try Demo
+                    Try Now
                   </Button>
                 </Link>
               </nav>

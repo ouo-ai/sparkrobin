@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Sparkles, Play, Image as ImageIcon, Film, Clock, Ratio, Palette, Info } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
 
-type GenerateStatus = "demo" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
+type GenerateStatus = "preview" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
 
 interface GenerateResponse {
   id: string
@@ -25,12 +25,12 @@ interface GenerateResponse {
   thumbnailUrl?: string
   errorMessage?: string
   message: string
-  demoMode: boolean
+  previewMode: boolean
 }
 
 interface TaskStatusResponse {
   taskId: string
-  status: Exclude<GenerateStatus, "demo" | "error">
+  status: Exclude<GenerateStatus, "preview" | "error">
   progress?: number
   videoUrl?: string
   thumbnailUrl?: string
@@ -58,7 +58,7 @@ function getPreviewAspectClass(aspectRatio: string): string {
 }
 
 function getStatusLabel(result: GenerateResponse): string {
-  if (result.demoMode) {
+  if (result.previewMode) {
     return "Workflow Preview"
   }
 
@@ -78,7 +78,7 @@ function getNoticeClasses(result: GenerateResponse): string {
     return "bg-red-500/10 border-red-500/20 text-red-200/90"
   }
 
-  if (result.demoMode) {
+  if (result.previewMode) {
     return "bg-amber-500/10 border-amber-500/20 text-amber-200/80"
   }
 
@@ -93,10 +93,10 @@ export function VideoGenerator() {
   const [isGenerating, setIsGenerating] = useState(false)
   const [result, setResult] = useState<GenerateResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const taskIsActive = Boolean(result?.taskId && !result.demoMode && ACTIVE_TASK_STATUSES.includes(result.status))
+  const taskIsActive = Boolean(result?.taskId && !result.previewMode && ACTIVE_TASK_STATUSES.includes(result.status))
 
   useEffect(() => {
-    if (!result?.taskId || result.demoMode || !ACTIVE_TASK_STATUSES.includes(result.status)) {
+    if (!result?.taskId || result.previewMode || !ACTIVE_TASK_STATUSES.includes(result.status)) {
       return
     }
 
@@ -160,7 +160,7 @@ export function VideoGenerator() {
       isCancelled = true
       clearTimeout(timeoutId)
     }
-  }, [result?.taskId, result?.status, result?.demoMode])
+  }, [result?.taskId, result?.status, result?.previewMode])
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
@@ -363,7 +363,7 @@ export function VideoGenerator() {
                 )}
               </div>
 
-              {!result.demoMode && typeof result.progress === "number" && result.status !== "completed" && (
+              {!result.previewMode && typeof result.progress === "number" && result.status !== "completed" && (
                 <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
                   <div
                     className="h-full rounded-full bg-primary transition-[width] duration-500"
@@ -386,7 +386,7 @@ export function VideoGenerator() {
                       Open generated video
                     </a>
                   )}
-                  {!result.demoMode && result.status !== "completed" && (
+                  {!result.previewMode && result.status !== "completed" && (
                     <p className="mt-1 text-muted-foreground/80">
                       Keep this tab open while Spark Robin checks the generation status.
                     </p>

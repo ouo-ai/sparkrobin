@@ -68,7 +68,7 @@ const features: BentoCardProps[] = [
     gradient: "from-yellow-500/20 to-orange-500/20",
   },
   {
-    title: "No Registration Demo",
+    title: "No Registration Required",
     description: "Try the complete workflow without signing up. Experience the interface and test your prompts freely.",
     icon: Sparkles,
     gradient: "from-teal-500/20 to-cyan-500/20",

@@ -18,7 +18,7 @@ interface GenerateRequest {
 interface GenerateResponse {
   id: string
   taskId?: string
-  status: "demo" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
+  status: "preview" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
   prompt: string
   style: string
   duration: number
@@ -28,7 +28,7 @@ interface GenerateResponse {
   frames: number
   progress?: number
   message: string
-  demoMode: boolean
+  previewMode: boolean
 }
 
 function hashString(str: string): number {
@@ -45,18 +45,18 @@ function getPreviewTitle(prompt: string): string {
   return prompt.length > 50 ? `${prompt.substring(0, 47)}...` : prompt
 }
 
-function getDemoResponse(params: {
+function getPreviewResponse(params: {
   prompt: string
   style: string
   duration: 5 | 10
   aspectRatio: "16:9" | "9:16" | "1:1"
 }): GenerateResponse {
   const promptHash = hashString(params.prompt.toLowerCase())
-  const id = `demo_${promptHash.toString(36)}_${Date.now().toString(36)}`
+  const id = `preview_${promptHash.toString(36)}_${Date.now().toString(36)}`
 
   return {
     id,
-    status: "demo",
+    status: "preview",
     prompt: params.prompt,
     style: params.style,
     duration: params.duration,
@@ -65,7 +65,7 @@ function getDemoResponse(params: {
     previewTitle: getPreviewTitle(params.prompt),
     frames: params.duration * 24,
     message: "Preview mode is active. Submit a prompt to explore the workflow.",
-    demoMode: true,
+    previewMode: true,
   }
 }
 
@@ -100,7 +100,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
     }
 
     if (!getApimartConfig()) {
-      return NextResponse.json(getDemoResponse({ prompt, style, duration, aspectRatio }))
+      return NextResponse.json(getPreviewResponse({ prompt, style, duration, aspectRatio }))
     }
 
     const task = await submitApimartVideoTask({ prompt, style, duration, aspectRatio })
@@ -118,7 +118,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       frames: duration * 24,
       progress: 0,
       message: "Video generation started. Status will update automatically.",
-      demoMode: false,
+      previewMode: false,
     })
   } catch (error) {
     const statusCode = error instanceof ApimartRequestError ? error.statusCode : 400

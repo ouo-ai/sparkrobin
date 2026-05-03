@@ -34,7 +34,7 @@ const useCases = [
   {
     icon: ShoppingBag,
     title: "E-commerce",
-    description: "Create product videos and demonstrations to boost sales and customer engagement.",
+    description: "Create product videos and walkthroughs to boost sales and customer engagement.",
     gradient: "from-teal-500/20 to-cyan-500/20",
   },
 ]
