@@ -164,7 +164,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
     if (!quotaResult.allowed) {
       return NextResponse.json(
         {
-          error: "正在排队中",
+          error: "Your video is queued and will appear here shortly.",
           retryAfterSeconds: quotaResult.retryAfterSeconds,
           resetAt: quotaResult.resetAt,
         },
