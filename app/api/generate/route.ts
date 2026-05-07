@@ -164,7 +164,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
     if (!quotaResult.allowed) {
       return NextResponse.json(
         {
-          error: "This IP has already generated one video in the last 24 hours. Try again after the limit resets.",
+          error: "正在排队中",
           retryAfterSeconds: quotaResult.retryAfterSeconds,
           resetAt: quotaResult.resetAt,
         },
