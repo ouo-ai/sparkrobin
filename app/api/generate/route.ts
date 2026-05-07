@@ -7,6 +7,13 @@ import {
   normalizeStyle,
   submitApimartVideoTask,
 } from "@/lib/apimart"
+import {
+  getClientIp,
+  releaseVideoGenerationQuota,
+  reserveVideoGenerationQuota,
+  type VideoRateLimitReservation,
+  type VideoRateLimitResult,
+} from "@/lib/video-rate-limit"
 
 interface GenerateRequest {
   prompt: string
@@ -33,6 +40,12 @@ interface GenerateResponse {
   imageUrls?: string[]
   message: string
   previewMode: boolean
+}
+
+interface GenerateErrorResponse {
+  error: string
+  retryAfterSeconds?: number
+  resetAt?: string
 }
 
 function hashString(str: string): number {
@@ -91,7 +104,9 @@ function normalizeImageUrls(value: unknown): string[] {
     .slice(0, 2)
 }
 
-export async function POST(request: NextRequest): Promise<NextResponse<GenerateResponse | { error: string }>> {
+export async function POST(request: NextRequest): Promise<NextResponse<GenerateResponse | GenerateErrorResponse>> {
+  let quotaReservation: VideoRateLimitReservation | null = null
+
   try {
     const body: GenerateRequest = await request.json()
 
@@ -134,6 +149,36 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       return NextResponse.json(getPreviewResponse({ prompt, style, duration, aspectRatio, generationMode, imageUrls }))
     }
 
+    const clientIp = getClientIp(request)
+    let quotaResult: VideoRateLimitResult
+
+    try {
+      quotaResult = await reserveVideoGenerationQuota(clientIp)
+    } catch {
+      return NextResponse.json(
+        { error: "Video generation rate limiting is temporarily unavailable. Try again later." },
+        { status: 503 },
+      )
+    }
+
+    if (!quotaResult.allowed) {
+      return NextResponse.json(
+        {
+          error: "This IP has already generated one video in the last 24 hours. Try again after the limit resets.",
+          retryAfterSeconds: quotaResult.retryAfterSeconds,
+          resetAt: quotaResult.resetAt,
+        },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(quotaResult.retryAfterSeconds),
+          },
+        },
+      )
+    }
+
+    quotaReservation = quotaResult.reservation
+
     const task = await submitApimartVideoTask({
       prompt,
       style,
@@ -141,6 +186,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       aspectRatio,
       imageUrls: generationMode === "image-to-video" ? imageUrls : undefined,
     })
+    quotaReservation = null
 
     return NextResponse.json({
       id: task.taskId,
@@ -160,6 +206,10 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       previewMode: false,
     })
   } catch (error) {
+    if (quotaReservation) {
+      await releaseVideoGenerationQuota(quotaReservation).catch(() => undefined)
+    }
+
     const statusCode = error instanceof ApimartRequestError ? error.statusCode : 400
     const errorMessage = error instanceof Error ? error.message : "Invalid request body"
 
