@@ -6,7 +6,10 @@ import {
   normalizeVideoDuration,
   normalizeStyle,
   submitApimartVideoTask,
+  type Sora2AspectRatio,
+  type Sora2Duration,
 } from "@/lib/apimart"
+import { auth } from "@/lib/auth"
 import {
   getClientIp,
   releaseVideoGenerationQuota,
@@ -65,8 +68,8 @@ function getPreviewTitle(prompt: string): string {
 function getPreviewResponse(params: {
   prompt: string
   style: string
-  duration: 5 | 10
-  aspectRatio: "16:9" | "9:16" | "1:1"
+  duration: Sora2Duration
+  aspectRatio: Sora2AspectRatio
   generationMode: "text-to-video" | "image-to-video"
   imageUrls?: string[]
 }): GenerateResponse {
@@ -101,13 +104,24 @@ function normalizeImageUrls(value: unknown): string[] {
 
   return value
     .filter((url): url is string => typeof url === "string" && /^https?:\/\//.test(url))
-    .slice(0, 2)
+    .slice(0, 1)
 }
 
 export async function POST(request: NextRequest): Promise<NextResponse<GenerateResponse | GenerateErrorResponse>> {
   let quotaReservation: VideoRateLimitReservation | null = null
 
   try {
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    })
+
+    if (!session?.user) {
+      return NextResponse.json(
+        { error: "Sign in with Google to generate your video." },
+        { status: 401 },
+      )
+    }
+
     const body: GenerateRequest = await request.json()
 
     const prompt = typeof body.prompt === "string" ? body.prompt.trim() : ""
@@ -196,7 +210,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<GenerateR
       style,
       duration,
       aspectRatio,
-      estimatedSeconds: duration === 10 ? 90 : 60,
+      estimatedSeconds: Math.max(60, duration * 12),
       previewTitle: getPreviewTitle(prompt),
       frames: duration * 24,
       progress: 0,

@@ -1,8 +1,9 @@
 import { NextRequest, NextResponse } from "next/server"
 
 import { ApimartRequestError, uploadApimartImage } from "@/lib/apimart"
+import { auth } from "@/lib/auth"
 
-const MAX_IMAGE_BYTES = 20 * 1024 * 1024
+const MAX_IMAGE_BYTES = 10 * 1024 * 1024
 const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/gif"])
 
 interface UploadResponse {
@@ -25,6 +26,14 @@ function isUploadFile(value: FormDataEntryValue | null): value is File {
 
 export async function POST(request: NextRequest): Promise<NextResponse<UploadResponse | { error: string }>> {
   try {
+    const session = await auth.api.getSession({
+      headers: request.headers,
+    })
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Sign in with Google to upload an image." }, { status: 401 })
+    }
+
     const formData = await request.formData()
     const file = formData.get("file")
 
@@ -37,7 +46,7 @@ export async function POST(request: NextRequest): Promise<NextResponse<UploadRes
     }
 
     if (file.size > MAX_IMAGE_BYTES) {
-      return NextResponse.json({ error: "Image must be 20MB or smaller" }, { status: 413 })
+      return NextResponse.json({ error: "Image must be 10MB or smaller" }, { status: 413 })
     }
 
     const upload = await uploadApimartImage(file)

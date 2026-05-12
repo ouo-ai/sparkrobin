@@ -6,8 +6,9 @@ import NextImage from "next/image"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Sparkles, Play, Image as ImageIcon, Film, Clock, Ratio, Palette, Info, Upload, X } from "lucide-react"
+import { Sparkles, Play, Image as ImageIcon, Film, Clock, Ratio, Palette, Info, Upload, X, LogIn, LogOut, UserCircle } from "lucide-react"
 import { Spinner } from "@/components/ui/spinner"
+import { signIn, signOut, useSession } from "@/lib/auth-client"
 
 type VideoGenerationMode = "text-to-video" | "image-to-video"
 type GenerateStatus = "preview" | "submitted" | "pending" | "processing" | "completed" | "failed" | "cancelled" | "error"
@@ -49,7 +50,7 @@ interface TaskStatusErrorResponse {
 }
 
 const ACTIVE_TASK_STATUSES: GenerateStatus[] = ["submitted", "pending", "processing"]
-const MAX_REFERENCE_IMAGE_BYTES = 20 * 1024 * 1024
+const MAX_REFERENCE_IMAGE_BYTES = 10 * 1024 * 1024
 const MAX_REFERENCE_IMAGE_DIMENSION = 1280
 const generationModes: Array<{ id: VideoGenerationMode; label: string; description: string }> = [
   {
@@ -79,10 +80,6 @@ const promptSuggestions: Record<VideoGenerationMode, string[]> = {
 function getPreviewAspectClass(aspectRatio: string): string {
   if (aspectRatio === "9:16") {
     return "aspect-[9/16] max-h-[420px] w-full max-w-[260px] mx-auto"
-  }
-
-  if (aspectRatio === "1:1") {
-    return "aspect-square max-h-[420px] w-full max-w-[420px] mx-auto"
   }
 
   return "aspect-video w-full"
@@ -182,11 +179,13 @@ export function VideoGenerator() {
   const [referencePreviewUrl, setReferencePreviewUrl] = useState<string | null>(null)
   const [style, setStyle] = useState("cinematic")
   const [aspectRatio, setAspectRatio] = useState("16:9")
-  const [duration, setDuration] = useState("5")
+  const [duration, setDuration] = useState("4")
   const [isGenerating, setIsGenerating] = useState(false)
   const [result, setResult] = useState<GenerateResponse | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [promptHintIndex, setPromptHintIndex] = useState(0)
+  const { data: session, isPending: sessionIsPending } = useSession()
+  const user = session?.user
   const taskIsActive = Boolean(result?.taskId && !result.previewMode && ACTIVE_TASK_STATUSES.includes(result.status))
   const activePromptSuggestions = promptSuggestions[generationMode]
   const activeMode = generationModes.find((mode) => mode.id === generationMode) || generationModes[0]
@@ -287,7 +286,36 @@ export function VideoGenerator() {
     }
   }, [result?.taskId, result?.status, result?.previewMode])
 
+  const handleSignIn = async () => {
+    setError(null)
+
+    try {
+      const result = await signIn.social({
+        provider: "google",
+        callbackURL: `${window.location.pathname}${window.location.search}`,
+      })
+
+      if (result?.error) {
+        setError("Google sign-in is temporarily unavailable. Try again in a moment.")
+      }
+    } catch {
+      setError("Google sign-in is temporarily unavailable. Try again in a moment.")
+    }
+  }
+
+  const handleSignOut = async () => {
+    setError(null)
+    setResult(null)
+
+    await signOut()
+  }
+
   const handleGenerate = async () => {
+    if (!user) {
+      await handleSignIn()
+      return
+    }
+
     if (!prompt.trim()) {
       setError("Please enter a prompt to generate a video")
       return
@@ -317,6 +345,11 @@ export function VideoGenerator() {
         const uploadData = await uploadResponse.json()
 
         if (!uploadResponse.ok || typeof uploadData.url !== "string") {
+          if (uploadResponse.status === 401) {
+            setError("Sign in with Google to upload an image.")
+            return
+          }
+
           throw new Error(uploadData.error || "Failed to upload image")
         }
 
@@ -339,6 +372,11 @@ export function VideoGenerator() {
       const data = await response.json()
 
       if (!response.ok) {
+        if (response.status === 401) {
+          setError("Sign in with Google to generate your video.")
+          return
+        }
+
         setError(data.error || "Failed to generate video")
         return
       }
@@ -365,7 +403,7 @@ export function VideoGenerator() {
     }
 
     if (file.size > MAX_REFERENCE_IMAGE_BYTES) {
-      setError("Image must be 20MB or smaller")
+      setError("Image must be 10MB or smaller")
       event.target.value = ""
       return
     }
@@ -387,14 +425,46 @@ export function VideoGenerator() {
         backdropFilter: "blur(12px)",
       }}>
         {/* Header */}
-        <div className="px-5 py-4 sm:px-6 sm:py-5 md:px-8 border-b border-white/10 flex items-center gap-3 sm:gap-4">
-          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center">
-            <Film className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+        <div className="px-5 py-4 sm:px-6 sm:py-5 md:px-8 border-b border-white/10 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3 sm:gap-4">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl bg-primary/20 flex items-center justify-center">
+              <Film className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
+            </div>
+            <div>
+              <h3 className="text-foreground text-sm sm:text-base font-medium">{activeMode.label}</h3>
+              <p className="text-muted-foreground text-xs sm:text-sm">Google sign-in required</p>
+            </div>
           </div>
-          <div>
-            <h3 className="text-foreground text-sm sm:text-base font-medium">{activeMode.label}</h3>
-            <p className="text-muted-foreground text-xs sm:text-sm">No registration required</p>
-          </div>
+          {sessionIsPending ? (
+            <div className="inline-flex h-9 items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3 text-xs text-muted-foreground sm:self-auto">
+              <Spinner className="h-3.5 w-3.5" />
+              Checking account
+            </div>
+          ) : user ? (
+            <div className="flex min-w-0 items-center justify-between gap-2 rounded-full border border-white/10 bg-white/[0.04] py-1 pl-2 pr-1 sm:max-w-[320px]">
+              <div className="flex min-w-0 items-center gap-2">
+                <UserCircle className="h-4 w-4 shrink-0 text-primary" />
+                <span className="truncate text-xs text-foreground/85">{user.email || user.name || "Signed in"}</span>
+              </div>
+              <button
+                type="button"
+                onClick={handleSignOut}
+                className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-white/10 hover:text-foreground"
+                aria-label="Sign out"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <button
+              type="button"
+              onClick={handleSignIn}
+              className="inline-flex h-9 items-center justify-center gap-2 rounded-full border border-white/10 bg-white/[0.06] px-3 text-xs font-medium text-foreground transition-colors hover:border-primary/40 hover:bg-primary/10"
+            >
+              <LogIn className="h-3.5 w-3.5" />
+              Sign in with Google
+            </button>
+          )}
         </div>
 
         {/* Input Section */}
@@ -441,7 +511,7 @@ export function VideoGenerator() {
                     <div className="flex flex-col items-center gap-2 text-center text-muted-foreground">
                       <Upload className="h-6 w-6 text-primary" />
                       <span className="text-sm font-medium text-foreground">Upload image for Image to Video</span>
-                      <span className="text-xs">JPG, PNG, WebP, or GIF up to 20MB</span>
+                      <span className="text-xs">JPG, PNG, WebP, or GIF up to 10MB</span>
                     </div>
                   )}
                 </label>
@@ -535,7 +605,6 @@ export function VideoGenerator() {
                 <SelectContent>
                   <SelectItem value="16:9">16:9</SelectItem>
                   <SelectItem value="9:16">9:16</SelectItem>
-                  <SelectItem value="1:1">1:1</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -551,8 +620,11 @@ export function VideoGenerator() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="5">5 sec</SelectItem>
-                  <SelectItem value="10">10 sec</SelectItem>
+                  <SelectItem value="4">4 sec</SelectItem>
+                  <SelectItem value="8">8 sec</SelectItem>
+                  <SelectItem value="12">12 sec</SelectItem>
+                  <SelectItem value="16">16 sec</SelectItem>
+                  <SelectItem value="20">20 sec</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -561,10 +633,20 @@ export function VideoGenerator() {
           {/* Generate Button */}
           <Button
             onClick={handleGenerate}
-            disabled={isGenerating || taskIsActive || !canGenerate}
+            disabled={sessionIsPending || isGenerating || taskIsActive || (Boolean(user) && !canGenerate)}
             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 rounded-full h-11 sm:h-12 md:h-14 text-sm sm:text-base font-medium shadow-lg shadow-primary/20"
           >
-            {isGenerating || taskIsActive ? (
+            {sessionIsPending ? (
+              <>
+                <Spinner className="w-4 h-4 mr-2" />
+                Checking account...
+              </>
+            ) : !user ? (
+              <>
+                <LogIn className="w-4 h-4 mr-2" />
+                Sign in with Google to generate
+              </>
+            ) : isGenerating || taskIsActive ? (
               <>
                 <Spinner className="w-4 h-4 mr-2" />
                 {taskIsActive ? "Generating video..." : generationMode === "image-to-video" ? "Preparing image..." : "Starting generation..."}

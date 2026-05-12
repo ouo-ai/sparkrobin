@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge"
 export const metadata: Metadata = {
   title: "Spark Robin Text To Video & Image to Video Generator",
   description:
-    "Use Spark Robin for Text To Video and Image to Video generation online with no registration. Upload an image or write a prompt, then choose styles and formats.",
+    "Use Spark Robin for Text To Video and Image to Video generation online with Google sign-in. Upload an image or write a prompt, then choose styles and formats.",
   keywords: [
     "Spark Robin AI video generator",
     "Spark Robin Text To Video",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     "text to video generator",
     "image to video generator",
     "online AI video generator",
-    "no registration AI video generator",
+    "Google sign-in AI video generator",
   ],
   alternates: {
     canonical: "/generator",
@@ -65,7 +65,7 @@ const steps = [
   {
     icon: Ratio,
     title: "Set the format",
-    description: "Use landscape, portrait, or square output for social posts, product concepts, and creative drafts.",
+    description: "Use landscape or portrait output for social posts, product concepts, and creative drafts.",
   },
   {
     icon: Zap,
@@ -84,7 +84,7 @@ const tips = [
 const formats = [
   "16:9 landscape for YouTube, website headers, ads, and presentation screens.",
   "9:16 portrait for TikTok, Reels, Shorts, and mobile-first creative testing.",
-  "1:1 square for social feeds, product concepts, thumbnails, and compact loops.",
+  "4, 8, 12, 16, and 20-second durations for short-form creative workflows.",
 ]
 
 const styles = [
@@ -113,7 +113,7 @@ const faqs = [
   {
     question: "Do I need to register before generating a video?",
     answer:
-      "No registration is required to start from the generator page. You can enter a prompt, choose settings, and track video generation in the page.",
+      "Yes. Sign in with Google before starting a generation. After sign-in, you can enter a prompt, choose settings, and track video generation in the page.",
   },
 ]
 
@@ -134,10 +134,10 @@ export default function GeneratorPage() {
               </h1>
               <p className="mt-5 max-w-2xl text-base font-medium leading-relaxed text-muted-foreground md:text-lg">
                 Use Spark Robin to create short videos from text prompts or reference images.
-                Choose Text To Video or Image to Video, set the style and format, then generate with no registration.
+                Choose Text To Video or Image to Video, sign in with Google, set the style and format, then generate.
               </p>
               <div className="mt-8 grid w-full max-w-2xl gap-3 text-sm text-foreground/85 sm:grid-cols-2">
-                {["Text To Video prompts", "Image to Video upload", "5s and 10s clips", "16:9, 9:16, and 1:1"].map((item) => (
+                {["Google sign-in required", "Text To Video prompts", "Image to Video upload", "16:9 and 9:16 formats"].map((item) => (
                   <div key={item} className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
                     <Check className="h-4 w-4 text-primary" />
                     <span>{item}</span>
@@ -245,14 +245,14 @@ function GeneratorJsonLd() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "No-registration AI video generation workflow",
+      description: "Google sign-in AI video generation workflow",
     },
     featureList: [
       "Text to Video Generation",
       "Image to Video Generation",
       "Cinematic, Anime, Realistic, Artistic, and Minimalist Styles",
-      "16:9, 9:16, and 1:1 Aspect Ratios",
-      "5-second and 10-second Video Durations",
+      "16:9 and 9:16 Aspect Ratios",
+      "4, 8, 12, 16, and 20-second Video Durations",
       "Live Generation Status",
     ],
     potentialAction: {

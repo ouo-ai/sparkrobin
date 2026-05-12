@@ -1,5 +1,6 @@
 const DEFAULT_APIMART_BASE_URL = "https://api.apimart.ai"
-const APIMART_VIDEO_MODEL = "kling-v2-6"
+const DEFAULT_APIMART_VIDEO_MODEL = "sora-2"
+const DEFAULT_APIMART_VIDEO_RESOLUTION = "720p"
 
 const STYLE_PROMPTS: Record<string, string> = {
   cinematic: "cinematic lighting, natural camera movement, film-grade detail",
@@ -20,7 +21,8 @@ export type VideoTaskStatus =
 interface ApimartConfig {
   apiKey: string
   baseUrl: string
-  mode: "std" | "pro"
+  model: "sora-2" | "sora-2-pro"
+  resolution: "720p" | "1024p" | "1080p"
 }
 
 interface ApimartGenerationData {
@@ -82,6 +84,9 @@ export interface ApimartImageUpload {
   bytes?: number
 }
 
+export type Sora2Duration = 4 | 8 | 12 | 16 | 20
+export type Sora2AspectRatio = "16:9" | "9:16"
+
 export class ApimartRequestError extends Error {
   statusCode: number
 
@@ -100,19 +105,44 @@ export function getApimartConfig(): ApimartConfig | null {
   }
 
   const baseUrl = (process.env.APIMART_BASE_URL || DEFAULT_APIMART_BASE_URL).replace(/\/+$/, "")
-  const mode = process.env.APIMART_VIDEO_MODE === "pro" ? "pro" : "std"
+  const model = process.env.APIMART_VIDEO_MODEL === "sora-2-pro" ? "sora-2-pro" : DEFAULT_APIMART_VIDEO_MODEL
+  const configuredResolution = process.env.APIMART_VIDEO_RESOLUTION
+  const resolution = configuredResolution === "1024p" || configuredResolution === "1080p"
+    ? configuredResolution
+    : DEFAULT_APIMART_VIDEO_RESOLUTION
 
-  return { apiKey, baseUrl, mode }
+  return { apiKey, baseUrl, model, resolution }
 }
 
-export function normalizeVideoDuration(duration: unknown): 5 | 10 {
+export function normalizeVideoDuration(duration: unknown): Sora2Duration {
   const numericDuration = typeof duration === "number" ? duration : Number(duration)
-  return numericDuration > 5 ? 10 : 5
+
+  if (numericDuration >= 20) {
+    return 20
+  }
+
+  if (numericDuration >= 16) {
+    return 16
+  }
+
+  if (numericDuration >= 12) {
+    return 12
+  }
+
+  if (numericDuration >= 8) {
+    return 8
+  }
+
+  return 4
 }
 
-export function normalizeVideoAspectRatio(aspectRatio: unknown): "16:9" | "9:16" | "1:1" {
-  if (aspectRatio === "9:16" || aspectRatio === "1:1") {
-    return aspectRatio
+export function normalizeVideoAspectRatio(aspectRatio: unknown): Sora2AspectRatio {
+  if (aspectRatio === "9:16" || aspectRatio === "portrait") {
+    return "9:16"
+  }
+
+  if (aspectRatio === "16:9" || aspectRatio === "landscape") {
+    return "16:9"
   }
 
   return "16:9"
@@ -162,8 +192,8 @@ export async function uploadApimartImage(file: File): Promise<ApimartImageUpload
 export async function submitApimartVideoTask(params: {
   prompt: string
   style: string
-  duration: 5 | 10
-  aspectRatio: "16:9" | "9:16" | "1:1"
+  duration: Sora2Duration
+  aspectRatio: Sora2AspectRatio
   imageUrls?: string[]
 }): Promise<ApimartVideoTaskSubmission> {
   const config = getApimartConfig()
@@ -173,12 +203,13 @@ export async function submitApimartVideoTask(params: {
   }
 
   const payload = {
-    model: APIMART_VIDEO_MODEL,
+    model: config.model,
     prompt: formatVideoPrompt(params.prompt, params.style),
-    mode: config.mode,
     duration: params.duration,
-    aspect_ratio: params.aspectRatio,
-    ...(params.imageUrls?.length ? { image_urls: params.imageUrls.slice(0, 2) } : {}),
+    resolution: config.resolution,
+    ...(params.imageUrls?.length
+      ? { image_urls: params.imageUrls.slice(0, 1) }
+      : { aspect_ratio: params.aspectRatio }),
   }
 
   const response = await fetch(`${config.baseUrl}/v1/videos/generations`, {

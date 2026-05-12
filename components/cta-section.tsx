@@ -107,7 +107,7 @@ export function CTASection() {
             Create videos in seconds
           </h2>
           <p className="text-muted-foreground text-sm md:text-base font-medium leading-[18.20px] md:leading-relaxed break-words max-w-2xl">
-            Start with Text To Video or upload an image for Image to Video. No registration and no commitment.
+            Start with Text To Video or upload an image for Image to Video after Google sign-in.
           </p>
         </div>
         <Link href="/generator">

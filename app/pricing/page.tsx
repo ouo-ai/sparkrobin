@@ -47,10 +47,10 @@ const plans = [
     href: "/generator",
     featured: false,
     features: [
-      "No registration required",
+      "Google sign-in required",
       "Core video styles",
-      "5-second video generation",
-      "Landscape, portrait, and square formats",
+      "4-second video generation",
+      "Landscape and portrait formats",
       "Generation status tracking",
     ],
   },
@@ -64,7 +64,7 @@ const plans = [
     featured: true,
     features: [
       "120 monthly video credits",
-      "5-second and 10-second videos",
+      "4, 8, 12, 16, and 20-second videos",
       "Priority generation queue",
       "Commercial project use",
       "Email support",
@@ -97,7 +97,7 @@ const included = [
   {
     icon: Clock,
     title: "Short-form formats",
-    description: "Create 5-second or 10-second clips for social posts, product shots, and concepts.",
+    description: "Create 4, 8, 12, 16, or 20-second clips for social posts, product shots, and concepts.",
   },
   {
     icon: Shield,
@@ -113,8 +113,8 @@ const included = [
 
 const questions = [
   {
-    question: "Can I start without registering?",
-    answer: "Yes. The Starter plan lets you begin from the generator with no registration required.",
+    question: "Do I need to sign in before generating?",
+    answer: "Yes. Spark Robin uses Google sign-in before video generation starts.",
   },
   {
     question: "What is a video credit?",

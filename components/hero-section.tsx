@@ -290,7 +290,7 @@ export function HeroSection() {
           Spark Robin: Text To Video & Image to Video
         </h1>
         <p className="text-muted-foreground text-base md:text-base lg:text-lg font-medium leading-relaxed max-w-lg mx-auto text-balance">
-          Create videos from a written prompt or animate a reference image. Try Text To Video and Image to Video below - no registration required.
+          Create videos from a written prompt or animate a reference image. Sign in with Google to use Text To Video and Image to Video below.
         </p>
       </div>
 

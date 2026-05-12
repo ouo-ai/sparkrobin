@@ -55,12 +55,12 @@ const features: BentoCardProps[] = [
   },
   {
     title: "Flexible Aspect Ratios",
-    description: "Create videos in 16:9 for YouTube, 9:16 for TikTok/Reels, 1:1 for Instagram, or 4:3 for presentations.",
+    description: "Create videos in 16:9 for YouTube and websites, or 9:16 for TikTok, Reels, and Shorts.",
     iconSrc: "/brand/card-icons/aspect-ratios.png",
   },
   {
     title: "Variable Duration",
-    description: "Generate 2, 4, 6, or 8-second clips perfect for social media, ads, or longer creative projects.",
+    description: "Generate 4, 8, 12, 16, or 20-second Sora 2 clips for social media, ads, and creative projects.",
     iconSrc: "/brand/card-icons/duration.png",
   },
   {
@@ -69,8 +69,8 @@ const features: BentoCardProps[] = [
     iconSrc: "/brand/card-icons/instant-preview.png",
   },
   {
-    title: "No Registration Required",
-    description: "Try the complete workflow without signing up. Experience the interface and test your prompts freely.",
+    title: "Google Sign-In",
+    description: "Use Google sign-in before generation so video requests are tied to a real account.",
     iconSrc: "/brand/card-icons/no-registration.png",
   },
 ]

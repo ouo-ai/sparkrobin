@@ -1,6 +1,6 @@
 export type ExampleVideoStyle = "cinematic" | "artistic" | "anime" | "realistic" | "minimalist"
-export type ExampleVideoAspectRatio = "16:9" | "9:16" | "1:1"
-export type ExampleVideoDuration = 5 | 10
+export type ExampleVideoAspectRatio = "16:9" | "9:16"
+export type ExampleVideoDuration = 4 | 8
 
 export interface ExampleVideo {
   id: string
@@ -19,7 +19,7 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     prompt: "A golden sunrise over misty mountains with eagles soaring",
     style: "cinematic",
     styleLabel: "Cinematic",
-    duration: 5,
+    duration: 4,
     aspectRatio: "16:9",
     videoSrc: "/videos/examples/misty-mountains.mp4",
     posterSrc: "/videos/examples/posters/misty-mountains.jpg",
@@ -29,7 +29,7 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     prompt: "Cyberpunk city street at night with neon reflections on wet pavement",
     style: "artistic",
     styleLabel: "Artistic",
-    duration: 10,
+    duration: 8,
     aspectRatio: "16:9",
     videoSrc: "/videos/examples/neon-city.mp4",
     posterSrc: "/videos/examples/posters/neon-city.jpg",
@@ -39,7 +39,7 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     prompt: "Cherry blossom petals falling in slow motion, anime style",
     style: "anime",
     styleLabel: "Anime",
-    duration: 5,
+    duration: 4,
     aspectRatio: "9:16",
     videoSrc: "/videos/examples/cherry-blossom.mp4",
     posterSrc: "/videos/examples/posters/cherry-blossom.jpg",
@@ -49,7 +49,7 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     prompt: "Ocean waves crashing on rocky cliffs during a thunderstorm",
     style: "realistic",
     styleLabel: "Realistic",
-    duration: 10,
+    duration: 8,
     aspectRatio: "16:9",
     videoSrc: "/videos/examples/storm-cliffs.mp4",
     posterSrc: "/videos/examples/posters/storm-cliffs.jpg",
@@ -59,8 +59,8 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     prompt: "Abstract geometric shapes morphing and flowing",
     style: "minimalist",
     styleLabel: "Minimalist",
-    duration: 5,
-    aspectRatio: "1:1",
+    duration: 4,
+    aspectRatio: "16:9",
     videoSrc: "/videos/examples/geometric-flow.mp4",
     posterSrc: "/videos/examples/posters/geometric-flow.jpg",
   },
@@ -69,8 +69,8 @@ export const EXAMPLE_VIDEOS: ExampleVideo[] = [
     prompt: "A cozy cabin interior with fireplace and falling snow outside",
     style: "cinematic",
     styleLabel: "Cinematic",
-    duration: 10,
-    aspectRatio: "1:1",
+    duration: 8,
+    aspectRatio: "9:16",
     videoSrc: "/videos/examples/winter-cabin.mp4",
     posterSrc: "/videos/examples/posters/winter-cabin.jpg",
   },

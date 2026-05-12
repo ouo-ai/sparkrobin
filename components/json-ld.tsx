@@ -13,7 +13,7 @@ export function JsonLd() {
       "@type": "Offer",
       price: "0",
       priceCurrency: "USD",
-      description: "Free no-registration workflow available",
+      description: "Google sign-in video generation workflow available",
     },
     featureList: [
       "Text To Video Generation",
@@ -21,7 +21,7 @@ export function JsonLd() {
       "Multiple Video Styles",
       "Custom Aspect Ratios",
       "Variable Duration",
-      "No Registration Required",
+      "Google Sign-In Required",
       "Live Generation Status",
     ],
     potentialAction: {
@@ -56,7 +56,7 @@ export function JsonLd() {
         name: "Do I need to register to try Spark Robin?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "No registration is required. You can immediately choose Text To Video or Image to Video, enter a prompt, choose a format, and track generation status directly in the page.",
+          text: "Google sign-in is required before generating a video. After signing in, you can choose Text To Video or Image to Video, enter a prompt, choose a format, and track generation status directly in the page.",
         },
       },
       {
@@ -72,7 +72,7 @@ export function JsonLd() {
         name: "What aspect ratios and durations are available?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Spark Robin supports 16:9 (landscape), 9:16 (portrait/vertical), and 1:1 (square) aspect ratios. Video durations include 5 and 10 seconds.",
+          text: "Spark Robin supports 16:9 landscape and 9:16 portrait videos. Sora 2 durations include 4, 8, 12, 16, and 20 seconds.",
         },
       },
       {
@@ -80,7 +80,7 @@ export function JsonLd() {
         name: "Is this a free AI video generator?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "Spark Robin can be tried without registration. Enter a prompt, choose your settings, and start a video generation workflow directly from the page.",
+          text: "Spark Robin requires Google sign-in before generation. After signing in, enter a prompt, choose your settings, and start a video generation workflow directly from the page.",
         },
       },
     ],

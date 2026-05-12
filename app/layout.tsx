@@ -8,7 +8,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: 'Spark Robin AI Video Generator | Text To Video & Image to Video',
-  description: 'Spark Robin is an AI video generator for Text To Video and Image to Video creation with a no-registration workflow.',
+  description: 'Spark Robin is an AI video generator for Text To Video and Image to Video creation with Google sign-in.',
   keywords: ['Spark Robin', 'sparkrobin', 'spark robin ai', 'Spark Robin AI video generator', 'Text To Video', 'Image to Video', 'AI video generator', 'text to video generator', 'image to video generator'],
   authors: [{ name: 'Spark Robin' }],
   creator: 'Spark Robin',
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     url: '/',
     siteName: 'Spark Robin',
     title: 'Spark Robin AI Video Generator | Text To Video & Image to Video',
-    description: 'Use Spark Robin for Text To Video and Image to Video generation with no registration.',
+    description: 'Use Spark Robin for Text To Video and Image to Video generation with Google sign-in.',
     images: [
       {
         url: '/brand/og-image.png',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'Spark Robin AI Video Generator',
-    description: 'Generate Text To Video and Image to Video clips in the Spark Robin no-registration workflow.',
+    description: 'Generate Text To Video and Image to Video clips in the Spark Robin Google sign-in workflow.',
     images: ['/brand/og-image.png'],
     creator: '@sparkrobin',
   },

@@ -18,7 +18,7 @@ const faqData = [
   {
     question: "Do I need to register to try Spark Robin?",
     answer:
-      "No registration is required. You can immediately choose Text To Video or Image to Video, enter a prompt, choose your format, and see generation status directly in the page.",
+      "Google sign-in is required before generating a video. After signing in, you can choose Text To Video or Image to Video, enter a prompt, choose your format, and see generation status directly in the page.",
   },
   {
     question: "What video styles does Spark Robin support?",
@@ -28,7 +28,7 @@ const faqData = [
   {
     question: "What aspect ratios and durations are available?",
     answer:
-      "Spark Robin supports 16:9 (landscape, ideal for YouTube), 9:16 (portrait, perfect for TikTok and Instagram Reels), and 1:1 (square, great for Instagram posts). Video durations include 5 and 10 seconds.",
+      "Spark Robin supports 16:9 landscape and 9:16 portrait videos. Sora 2 durations include 4, 8, 12, 16, and 20 seconds.",
   },
   {
     question: "Does Spark Robin generate videos from prompts?",
